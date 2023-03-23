@@ -1,11 +1,10 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
-import 'package:flame/sprite.dart';
-import 'package:flame/widgets.dart';
 
 import 'package:sokoban/sokoban.dart';
 import 'package:sokoban/constants.dart';
 import 'package:sokoban/utils/int_vector2.dart';
+import 'package:sokoban/helper/direction.dart';
 
 class Player extends SpriteAnimationComponent
     with KeyboardHandler, HasGameRef<SokobanGame> {
@@ -37,6 +36,24 @@ class Player extends SpriteAnimationComponent
   IntVector2 get gridPositionMoveTo => _gridPositionMoveTo;
   bool moveTo(IntVector2 value) {
     _gridPositionMoveTo = value;
+    IntVector2 deltaVec = _gridPositionMoveTo - gridPosition;
+    Direction direction = deltaVec.x.abs() > deltaVec.y.abs()
+        ? (deltaVec.x > 0 ? Direction.right : Direction.left)
+        : (deltaVec.y > 0 ? Direction.down : Direction.up);
+    switch (direction) {
+      case Direction.down:
+        animation = downAnimation;
+        break;
+      case Direction.up:
+        animation = upAnimation;
+        break;
+      case Direction.left:
+        animation = leftAnimation;
+        break;
+      case Direction.right:
+        animation = rightAnimation;
+        break;
+    }
     isMoving = true;
     // 移動アニメーション
     add(
@@ -72,35 +89,27 @@ class Player extends SpriteAnimationComponent
     ], loop: true);
     // 上向き時のアニメーション
     upAnimation = SpriteAnimation([
-      SpriteAnimationFrame(spriteList[0], 0.1),
-      SpriteAnimationFrame(spriteList[1], 0.1),
-      SpriteAnimationFrame(spriteList[0], 0.1),
-      SpriteAnimationFrame(spriteList[2], 0.1),
-    ], loop: true);
-    // 左向き時のアニメーション
-    leftAnimation = SpriteAnimation([
-      SpriteAnimationFrame(spriteList[0], 0.1),
-      SpriteAnimationFrame(spriteList[1], 0.1),
-      SpriteAnimationFrame(spriteList[0], 0.1),
-      SpriteAnimationFrame(spriteList[2], 0.1),
+      SpriteAnimationFrame(spriteList[3], 0.2),
+      SpriteAnimationFrame(spriteList[4], 0.2),
+      SpriteAnimationFrame(spriteList[3], 0.2),
+      SpriteAnimationFrame(spriteList[5], 0.2),
     ], loop: true);
     // 右向き時のアニメーション
     rightAnimation = SpriteAnimation([
-      SpriteAnimationFrame(spriteList[0], 0.1),
-      SpriteAnimationFrame(spriteList[1], 0.1),
-      SpriteAnimationFrame(spriteList[0], 0.1),
-      SpriteAnimationFrame(spriteList[2], 0.1),
+      SpriteAnimationFrame(spriteList[6], 0.2),
+      SpriteAnimationFrame(spriteList[7], 0.2),
+      SpriteAnimationFrame(spriteList[6], 0.2),
+      SpriteAnimationFrame(spriteList[8], 0.2),
+    ], loop: true);
+    // 左向き時のアニメーション
+    leftAnimation = SpriteAnimation([
+      SpriteAnimationFrame(spriteList[9], 0.2),
+      SpriteAnimationFrame(spriteList[10], 0.2),
+      SpriteAnimationFrame(spriteList[9], 0.2),
+      SpriteAnimationFrame(spriteList[11], 0.2),
     ], loop: true);
 
     position = _gridToPixelPosition(gridPosition);
-    // animation = SpriteAnimation.fromFrameData(
-    //   game.images.fromCache('player.png'),
-    //   SpriteAnimationData.sequenced(
-    //     amount: 3,
-    //     textureSize: Vector2.all(64),
-    //     stepTime: 0.3,
-    //   ),
-    // );
     animation = downAnimation;
   }
 }
