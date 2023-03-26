@@ -53,6 +53,8 @@ class Player extends SpriteAnimationComponent
       case Direction.right:
         animation = rightAnimation;
         break;
+      case Direction.none:
+        break;
     }
     isMoving = true;
     // 移動アニメーション

@@ -14,10 +14,10 @@ const List<String> stageDataStr = [
   r'########',
   r'#.   @ #',
   r'#    $ #',
-  r'#$##   #',
-  r'# ##$ .#',
-  r'#    ###',
-  r'#   .###',
+  r'#$#  . #',
+  r'# # $  #',
+  r'#     ##',
+  r'#   . ##',
   r'########',
 ];
 
@@ -43,9 +43,11 @@ int playerX = 0;
 int playerY = 0;
 int tileColumns = 0;
 int tileRows = 0;
-late int goals;
+int goals = 0;
 List<List<Tile>> stageData = [];
-void readStageData() {
+
+// ステージデータの読み込み
+void readStageData(List<String> stageDataStr) {
   goals = 0;
   int maxRows = stageDataStr.length;
   int maxColumns = stageDataStr
@@ -94,6 +96,7 @@ void readStageData() {
   }
 }
 
+// ステージクリア判定
 bool judgeStageClear() {
   int countOfCrateAndGoal = 0;
   for (int j = 0; j < tileRows; j++) {

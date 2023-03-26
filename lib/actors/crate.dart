@@ -1,5 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/effects.dart';
+import 'package:flame/extensions.dart';
 
 import 'package:sokoban/sokoban.dart';
 import 'package:sokoban/constants.dart';
@@ -11,13 +12,27 @@ class Crate extends SpriteAnimationComponent
   IntVector2 _gridPositionMoveTo;
   double xOffset;
   double yOffset;
-  late Vector2 offset;
+  Vector2 offset = Vector2(0, 0);
   bool isMoving = false;
+  bool isOnGoal = false;
+
+  ColorEffect? colorEffect = null;
+  ColorEffect blinkEffect = ColorEffect(
+    Color.fromARGB(255, 255, 255, 255),
+    const Offset(0.0, 0.0),
+    EffectController(duration: 1.2, reverseDuration: 1.2, infinite: true),
+  );
+  ColorEffect normalColorEffect = ColorEffect(
+    Color.fromARGB(255, 255, 255, 0),
+    const Offset(0.0, 0.0),
+    EffectController(duration: 1.2, reverseDuration: 1.2, infinite: true),
+  );
 
   Crate({
     required this.gridPosition,
     this.xOffset = 0,
     this.yOffset = 0,
+    required this.isOnGoal,
   })  : _gridPositionMoveTo = gridPosition,
         super(size: Vector2.all(Constants.tileSize), anchor: Constants.anchor) {
     offset = Vector2(xOffset, yOffset) +
@@ -29,7 +44,7 @@ class Crate extends SpriteAnimationComponent
 
   IntVector2 get gridPositionMoveTo => _gridPositionMoveTo;
 
-  bool moveTo(IntVector2 value, Function? callback) {
+  bool moveTo(IntVector2 value, bool isOnGoal, Function? callback) {
     _gridPositionMoveTo = value;
     isMoving = true;
     // 移動アニメーション
@@ -46,6 +61,11 @@ class Crate extends SpriteAnimationComponent
         },
       ),
     );
+    if (isOnGoal) {
+      addColorEffect();
+    } else {
+      removeColorEffect();
+    }
     return true;
   }
 
@@ -60,5 +80,32 @@ class Crate extends SpriteAnimationComponent
         stepTime: 0.3,
       ),
     );
+    if (isOnGoal) {
+      this.addColorEffect();
+    }
+  }
+
+  EffectController? effectController = null;
+  void addColorEffect() {
+    colorEffect = ColorEffect(
+      Color.fromARGB(255, 255, 255, 255),
+      const Offset(0.0, 1.0),
+      EffectController(duration: 1.2, reverseDuration: 1.2, infinite: true),
+    );
+    add(colorEffect!);
+  }
+
+  void removeColorEffect() {
+    // Effect自体は終わってもnullにならないが、そのままremoveするとFlameの中でエラーになる
+    // Effectがあるかどうかを調べる方法がわからなかったので、終了したEffectは自身でnullにして、
+    // nullでない時だけremoveするようにした。
+    if (colorEffect != null) remove(colorEffect!);
+    colorEffect = ColorEffect(
+        Color.fromARGB(0, 0, 0, 0),
+        const Offset(0.0, 0.0),
+        EffectController(duration: 0.1), onComplete: () {
+      colorEffect = null; // Effect自体が終了してもnullにならないようなので自身でnullにしている
+    });
+    add(colorEffect!);
   }
 }

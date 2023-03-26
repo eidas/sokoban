@@ -7,14 +7,14 @@ import 'actors/crate.dart';
 import 'objects/wall.dart';
 import 'objects/ground.dart';
 import 'objects/goal.dart';
-import 'managers/segment_manager.dart';
+import 'managers/stage_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:sokoban/utils/int_vector2.dart';
 
 class SokobanGame extends FlameGame with KeyboardEvents {
   SokobanGame();
 
-  late Player _player;
+  Player _player = Player(gridPosition: IntVector2(-1, -1));
   List<Crate> _crates = [];
   // double objectSpeed = 0.0;
 
@@ -73,6 +73,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
             ));
             var crate = Crate(
               gridPosition: pos,
+              isOnGoal: false,
             );
             _crates.add(crate);
             // add(crate);
@@ -86,6 +87,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
             ));
             var crate = Crate(
               gridPosition: pos,
+              isOnGoal: true,
             );
             _crates.add(crate);
             // add(crate);
@@ -99,7 +101,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
   void initializeGame() {
     _crates = [];
-    readStageData();
+    readStageData(stageDataStr);
     removeAll(children); // 2回目以降のため追加されたコンポーネントを一度全部削除
     loadGameSegments();
     for (var _crate in _crates) {
@@ -158,27 +160,28 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     // 移動可否の判定
     var oneStepAhead = stageData[y][x]; // 一歩先
     if (oneStepAhead == Tile.Wall) return;
+    // プレイヤーの先に荷物がある場合
     if (oneStepAhead == Tile.Crate || oneStepAhead == Tile.CrateAndGoal) {
       IntVector2 crateMoveTo =
           gridMoveTo + IntVector2(horizontalDirection, verticalDirection);
       var cx = crateMoveTo.x;
       var cy = crateMoveTo.y;
       var twoStepAhead = stageData[cy][cx]; // 二歩先
-      // 荷物の移動先がゴールまたは地面の時だけ動かせる
-      if (twoStepAhead == Tile.Goal || twoStepAhead == Tile.Ground) {
-        var crate = findCrate(gridMoveTo);
+      // 荷物の移動先がゴールでも地面でもない時は動かせない
+      if (twoStepAhead != Tile.Goal && twoStepAhead != Tile.Ground) return;
 
-        // 荷物移動
-        crate.moveTo(crateMoveTo, () {
-          // マップ更新
-          stageData[y][x] =
-              (oneStepAhead == Tile.CrateAndGoal ? Tile.Goal : Tile.Ground);
-          stageData[cy][cx] =
-              (twoStepAhead == Tile.Goal ? Tile.CrateAndGoal : Tile.Crate);
-        });
-      } else {
-        return;
-      }
+      // 荷物のスプライトを探す
+      var crate = findCrate(gridMoveTo);
+
+      // 荷物移動
+      var onGoal = (twoStepAhead == Tile.Goal); // 移動先がゴールか
+      crate.moveTo(crateMoveTo, onGoal, () {
+        // マップ更新
+        stageData[y][x] =
+            (oneStepAhead == Tile.CrateAndGoal ? Tile.Goal : Tile.Ground);
+        stageData[cy][cx] =
+            (twoStepAhead == Tile.Goal ? Tile.CrateAndGoal : Tile.Crate);
+      });
     }
     _player.moveTo(gridMoveTo);
   }
