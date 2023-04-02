@@ -10,6 +10,7 @@ class Player extends SpriteAnimationComponent
     with KeyboardHandler, HasGameRef<SokobanGame> {
   IntVector2 gridPosition;
   IntVector2 _gridPositionMoveTo;
+  Direction direction = Direction.down;
   double xOffset;
   double yOffset;
   late Vector2 offset;
@@ -34,12 +35,15 @@ class Player extends SpriteAnimationComponent
       vec2.vector2 * Constants.tileSize + offset;
 
   IntVector2 get gridPositionMoveTo => _gridPositionMoveTo;
-  bool moveTo(IntVector2 value) {
-    _gridPositionMoveTo = value;
+
+  // 移動
+  bool moveTo(IntVector2 newPosition, {bool isReverse = false}) {
+    _gridPositionMoveTo = newPosition;
     IntVector2 deltaVec = _gridPositionMoveTo - gridPosition;
-    Direction direction = deltaVec.x.abs() > deltaVec.y.abs()
+    direction = deltaVec.x.abs() > deltaVec.y.abs()
         ? (deltaVec.x > 0 ? Direction.right : Direction.left)
         : (deltaVec.y > 0 ? Direction.down : Direction.up);
+    if (isReverse) direction = direction.oppositeSide; // リバースの時は逆向きにする
     switch (direction) {
       case Direction.down:
         animation = downAnimation;

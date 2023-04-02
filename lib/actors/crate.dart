@@ -17,16 +17,6 @@ class Crate extends SpriteAnimationComponent
   bool isOnGoal = false;
 
   ColorEffect? colorEffect = null;
-  ColorEffect blinkEffect = ColorEffect(
-    Color.fromARGB(255, 255, 255, 255),
-    const Offset(0.0, 0.0),
-    EffectController(duration: 1.2, reverseDuration: 1.2, infinite: true),
-  );
-  ColorEffect normalColorEffect = ColorEffect(
-    Color.fromARGB(255, 255, 255, 0),
-    const Offset(0.0, 0.0),
-    EffectController(duration: 1.2, reverseDuration: 1.2, infinite: true),
-  );
 
   Crate({
     required this.gridPosition,
@@ -57,6 +47,7 @@ class Crate extends SpriteAnimationComponent
           // アニメーション完了時にisMovingほかを更新
           isMoving = false;
           gridPosition = _gridPositionMoveTo;
+
           if (callback != null) callback();
         },
       ),

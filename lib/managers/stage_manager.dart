@@ -1,3 +1,5 @@
+import 'package:sokoban/utils/int_vector2.dart';
+
 // 面データのファイル形式は標準的なXsokoban形式に準拠する
 /*
 ＊ マップの表記法
@@ -44,7 +46,32 @@ int playerY = 0;
 int tileColumns = 0;
 int tileRows = 0;
 int goals = 0;
-List<List<Tile>> stageData = [];
+
+class Board {
+  List<List<Tile>> boardData = [];
+  Board();
+  Board.clone(Board copyingBoard) {
+    for (var row in copyingBoard.boardData) {
+      List<Tile> newRow = [];
+      for (var col in row) {
+        newRow.add(col);
+      }
+      boardData.add(newRow);
+    }
+  }
+}
+
+Board board = Board();
+
+List<ReplayData> replayList = [];
+
+class ReplayData {
+//  final List<List<Tile>> board;
+  final Board board;
+  final IntVector2 player_pos;
+  final IntVector2? crate_pos;
+  ReplayData(this.board, this.player_pos, this.crate_pos);
+}
 
 // ステージデータの読み込み
 void readStageData(List<String> stageDataStr) {
@@ -55,36 +82,36 @@ void readStageData(List<String> stageDataStr) {
       .reduce((value, element) => value > element ? value : element);
   tileColumns = maxColumns;
   tileRows = maxRows;
-  stageData = List.generate(
+  board.boardData = List.generate(
       maxRows, (j) => List.generate(maxColumns, (i) => Tile.None));
   for (int j = 0; j < maxRows; j++) {
     for (int i = 0; i < stageDataStr[j].length; i++) {
       var chr = stageDataStr[j][i];
       switch (chr) {
         case ' ': // Ground
-          stageData[j][i] = Tile.Ground;
+          board.boardData[j][i] = Tile.Ground;
           break;
         case '#': // Block
-          stageData[j][i] = Tile.Wall;
+          board.boardData[j][i] = Tile.Wall;
           break;
         case '.': // Goal
-          stageData[j][i] = Tile.Goal;
+          board.boardData[j][i] = Tile.Goal;
           goals++;
           break;
         case '@': // Player
-          stageData[j][i] = Tile.Ground;
+          board.boardData[j][i] = Tile.Ground;
           playerX = i;
           playerY = j;
           break;
         case r'$': // Crate
-          stageData[j][i] = Tile.Crate;
+          board.boardData[j][i] = Tile.Crate;
           break;
         case '*': // Crate + Goal
-          stageData[j][i] = Tile.CrateAndGoal;
+          board.boardData[j][i] = Tile.CrateAndGoal;
           goals++;
           break;
         case '+': // Player + Goal
-          stageData[j][i] = Tile.Goal;
+          board.boardData[j][i] = Tile.Goal;
           playerX = i;
           playerY = j;
           goals++;
@@ -94,6 +121,7 @@ void readStageData(List<String> stageDataStr) {
       }
     }
   }
+  replayList.add(ReplayData(board, IntVector2(playerX, playerY), null));
 }
 
 // ステージクリア判定
@@ -101,8 +129,41 @@ bool judgeStageClear() {
   int countOfCrateAndGoal = 0;
   for (int j = 0; j < tileRows; j++) {
     for (int i = 0; i < tileColumns; i++) {
-      countOfCrateAndGoal += (stageData[j][i] == Tile.CrateAndGoal) ? 1 : 0;
+      countOfCrateAndGoal +=
+          (board.boardData[j][i] == Tile.CrateAndGoal) ? 1 : 0;
     }
   }
   return countOfCrateAndGoal == goals;
+}
+
+// ステージデータをXsokoban形式の文字列で返す
+List<String> getXsokobanString(Board board) {
+  List<String> xsokobanString = [];
+  for (var row in board.boardData) {
+    var rowString = '';
+    for (var col in row) {
+      switch (col) {
+        case Tile.Ground:
+          rowString += ' ';
+          break;
+        case Tile.Wall:
+          rowString += '#';
+          break;
+        case Tile.Goal:
+          rowString += '.';
+          break;
+        case Tile.Crate:
+          rowString += '\$';
+          break;
+        case Tile.CrateAndGoal:
+          rowString += '*';
+          break;
+        default:
+          rowString += ' ';
+          break;
+      }
+    }
+    xsokobanString.add(rowString);
+  }
+  return xsokobanString;
 }
