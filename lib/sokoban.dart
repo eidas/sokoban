@@ -35,7 +35,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
       'ground.png',
       'goal.png',
     ]);
-    initializeGame();
+    await initializeGame();
   }
 
   @override
@@ -102,9 +102,10 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }
   }
 
-  void initializeGame() {
+  Future<void> initializeGame() async {
     _crates = [];
-    readStageData(stageDataStr);
+    await readStageDataFromFile('assets/stageData/stage.001.dat');
+    // readStageData(const_stageDataStr);
     removeAll(children); // 2回目以降のため追加されたコンポーネントを一度全部削除
     loadGameSegments();
     for (var _crate in _crates) {

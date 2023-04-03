@@ -1,4 +1,6 @@
 import 'package:sokoban/utils/int_vector2.dart';
+import 'dart:io';
+import 'dart:convert';
 
 // 面データのファイル形式は標準的なXsokoban形式に準拠する
 /*
@@ -12,7 +14,7 @@ Xsokoban形式
 人＋ゴール:	  +
 荷物＋ゴール:	*
 */
-const List<String> stageDataStr = [
+const List<String> const_stageDataStr = [
   r'########',
   r'#.   @ #',
   r'#    $ #',
@@ -71,6 +73,14 @@ class ReplayData {
   final IntVector2 player_pos;
   final IntVector2? crate_pos;
   ReplayData(this.board, this.player_pos, this.crate_pos);
+}
+
+// ファイルからステージデータを読み込み
+Future<void> readStageDataFromFile(String filePath) async {
+  List<String> stageDataStr = [];
+  //ファイル読み込み処理
+  stageDataStr = await (File(filePath).readAsLines());
+  readStageData(stageDataStr);
 }
 
 // ステージデータの読み込み
