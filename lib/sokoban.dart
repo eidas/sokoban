@@ -5,6 +5,8 @@ import 'package:collection/collection.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
+import 'helper/direction.dart';
+import 'helper/user_command.dart';
 import 'objects/wall.dart';
 import 'objects/ground.dart';
 import 'objects/goal.dart';
@@ -20,6 +22,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   List<Crate> _crates = [];
   // double objectSpeed = 0.0;
   int gameStep = 0;
+  List<UserCommand> userCommands = [];
 
   @override
   Color backgroundColor() {
@@ -40,6 +43,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
   @override
   void update(double dt) {
+    executeUserCommand();
     if (_player.isMoving == false && judgeStageClear()) {
       overlays.add('StageClear');
     }
@@ -126,12 +130,33 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     replayList = [ReplayData(board, playerPosition, null)];
   }
 
+  // 仮想キーの入力イベント
+  void onArrowKeyChanged(Direction direction) {
+    // print('${direction}');
+    switch (direction) {
+      case Direction.left:
+        userCommands.add(UserCommand.moveLeft);
+        break;
+      case Direction.right:
+        userCommands.add(UserCommand.moveRight);
+        break;
+      case Direction.up:
+        userCommands.add(UserCommand.moveUp);
+        break;
+      case Direction.down:
+        userCommands.add(UserCommand.moveDown);
+        break;
+      default:
+        break;
+    }
+  }
+
+  // キーボードからの入力イベント
   @override
   KeyEventResult onKeyEvent(
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
-    // final isKeyDown = event is RawKeyDownEvent;
     var horizontalDirection = 0;
     var verticalDirection = 0;
 
@@ -140,36 +165,95 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
     // Undo,Redoのキー入力処理
     if (keysPressed.contains(LogicalKeyboardKey.digit1)) {
-      undo();
+      userCommands.add(UserCommand.undo);
+      //     undo();
       return KeyEventResult.handled;
     } else if (keysPressed.contains(LogicalKeyboardKey.digit2)) {
-      redo();
+      userCommands.add(UserCommand.redo);
+//      redo();
       return KeyEventResult.handled;
     }
 
-    // 各方向キーの入力
-    horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyA) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowLeft))
-        ? -1
-        : 0;
-    horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyD) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowRight))
-        ? 1
-        : 0;
-    verticalDirection += (keysPressed.contains(LogicalKeyboardKey.keyW) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowUp))
-        ? -1
-        : 0;
-    verticalDirection += (keysPressed.contains(LogicalKeyboardKey.keyS) ||
-            keysPressed.contains(LogicalKeyboardKey.arrowDown))
-        ? 1
-        : 0;
+    if ((keysPressed.contains(LogicalKeyboardKey.keyA) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowLeft))) {
+      userCommands.add(UserCommand.moveLeft);
+    }
+    if ((keysPressed.contains(LogicalKeyboardKey.keyD) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowRight))) {
+      userCommands.add(UserCommand.moveRight);
+    }
+    if ((keysPressed.contains(LogicalKeyboardKey.keyW) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowUp))) {
+      userCommands.add(UserCommand.moveUp);
+    }
+    if ((keysPressed.contains(LogicalKeyboardKey.keyS) ||
+        keysPressed.contains(LogicalKeyboardKey.arrowDown))) {
+      userCommands.add(UserCommand.moveDown);
+    }
+
+    // // 各方向キーの入力
+    // horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyA) ||
+    //         keysPressed.contains(LogicalKeyboardKey.arrowLeft))
+    //     ? -1
+    //     : 0;
+    // horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyD) ||
+    //         keysPressed.contains(LogicalKeyboardKey.arrowRight))
+    //     ? 1
+    //     : 0;
+    // verticalDirection += (keysPressed.contains(LogicalKeyboardKey.keyW) ||
+    //         keysPressed.contains(LogicalKeyboardKey.arrowUp))
+    //     ? -1
+    //     : 0;
+    // verticalDirection += (keysPressed.contains(LogicalKeyboardKey.keyS) ||
+    //         keysPressed.contains(LogicalKeyboardKey.arrowDown))
+    //     ? 1
+    //     : 0;
+
+    // if (horizontalDirection.abs() + verticalDirection.abs() == 1) {
+    //   playerMove(horizontalDirection, verticalDirection);
+    //   return KeyEventResult.handled;
+    // }
+    return KeyEventResult.handled;
+  }
+
+  // ユーザーコマンドの実行
+  void executeUserCommand() {
+    var horizontalDirection = 0;
+    var verticalDirection = 0;
+
+    // プレイヤーが移動中はユーザーコマンドを無視
+    if (_player.isMoving) return;
+
+    while (!userCommands.isEmpty) {
+      var userCommand = userCommands.removeLast();
+      switch (userCommand) {
+        case UserCommand.undo:
+          undo();
+          return;
+        case UserCommand.redo:
+          redo();
+          return;
+        case UserCommand.moveLeft:
+          horizontalDirection = -1;
+          break;
+        case UserCommand.moveRight:
+          horizontalDirection = 1;
+          break;
+        case UserCommand.moveUp:
+          verticalDirection = -1;
+          break;
+        case UserCommand.moveDown:
+          verticalDirection = 1;
+          break;
+        default:
+          break;
+      }
+    }
+    userCommands = [];
 
     if (horizontalDirection.abs() + verticalDirection.abs() == 1) {
       playerMove(horizontalDirection, verticalDirection);
-      return KeyEventResult.handled;
     }
-    return KeyEventResult.ignored;
   }
 
   void playerMove(int horizontalDirection, int verticalDirection) {
