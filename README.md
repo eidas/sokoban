@@ -1,16 +1,15 @@
 # sokoban
 
-A new Flutter project.
+Flutter上のゲームエンジンFlameで練習用に作った倉庫番
 
-## Getting Started
+## 利用した素材、参考にしたもの
 
-This project is a starting point for a Flutter application.
+キャラクター等の画像は以下のサイトのものを利用させていただきました。
+[https://opengameart.org/content/sokoban-100-tiles]
 
-A few resources to get you started if this is your first Flutter project:
+また仮想十字キーのコードは以下のサイトを参考にさせていただきました。
+[https://blog.codemagic.io/flutter-flame-game-development-japanese/]
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+その他参考にしたサイト
+- Flameのチュートリアル [https://github.com/flame-engine/flame/tree/main/doc/tutorials/platformer]
+- GodotEngineで倉庫番 [https://2dgames.jp/godot-sokoban-sample/]
