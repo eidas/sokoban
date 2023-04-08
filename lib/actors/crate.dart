@@ -34,7 +34,12 @@ class Crate extends SpriteAnimationComponent
 
   IntVector2 get gridPositionMoveTo => _gridPositionMoveTo;
 
-  bool moveTo(IntVector2 value, bool isOnGoal, Function? callback) {
+  bool moveTo(
+    IntVector2 value,
+    bool isOnGoal,
+    Function? callback, {
+    double speedFactor = 1.0,
+  }) {
     _gridPositionMoveTo = value;
     isMoving = true;
     // 移動アニメーション
@@ -42,7 +47,7 @@ class Crate extends SpriteAnimationComponent
       MoveEffect.to(
         _gridToPixelPosition(
             _gridPositionMoveTo), //_gridPositionMoveTo * Constants.tileSize + offset,
-        EffectController(duration: 0.2),
+        EffectController(duration: Constants.defaultMoveTime * speedFactor),
         onComplete: () {
           // アニメーション完了時にisMovingほかを更新
           isMoving = false;

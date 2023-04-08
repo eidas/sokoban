@@ -6,4 +6,5 @@ class Constants {
 
   // スプライト関係
   static const Anchor anchor = Anchor.center;
+  static const double defaultMoveTime = 0.2;
 }

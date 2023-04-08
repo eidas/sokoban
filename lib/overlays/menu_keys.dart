@@ -3,22 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:sokoban/helper/user_command.dart';
 import 'package:sokoban/sokoban.dart';
 
-class NavigationKeys extends StatefulWidget {
+class MenuKeys extends StatefulWidget {
   // Reference to parent game.
   final SokobanGame game;
 
-  final ValueChanged<UserCommand>? onDirectionChanged;
+  final ValueChanged<UserCommand>? onMenuSelected;
 
-  const NavigationKeys(
-      {Key? key, required this.game, required this.onDirectionChanged})
+  const MenuKeys({Key? key, required this.game, required this.onMenuSelected})
       : super(key: key);
 
   @override
-  State<NavigationKeys> createState() => _NavigationKeysState();
+  State<MenuKeys> createState() => _MenuKeysState();
 }
 
-class _NavigationKeysState extends State<NavigationKeys> {
-  UserCommand direction = UserCommand.none;
+class _MenuKeysState extends State<MenuKeys> {
+  var userCommand = UserCommand.none;
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +26,16 @@ class _NavigationKeysState extends State<NavigationKeys> {
       width: 120,
       child: Column(
         children: [
-          ArrowKey(
-            icons: Icons.keyboard_arrow_up,
+          MenuKey(
+            icons: Icons.menu,
             onTapDown: (det) {
-              updateDirection(UserCommand.moveUp);
+              updateDirection(UserCommand.menu);
             },
             onTapUp: (dets) {
               updateDirection(UserCommand.none);
             },
             onLongPressDown: () {
-              updateDirection(UserCommand.moveUp);
+              updateDirection(UserCommand.menu);
             },
             onLongPressEnd: (dets) {
               updateDirection(UserCommand.none);
@@ -45,31 +44,31 @@ class _NavigationKeysState extends State<NavigationKeys> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ArrowKey(
-                icons: Icons.keyboard_arrow_left,
+              MenuKey(
+                icons: Icons.undo,
                 onTapDown: (det) {
-                  updateDirection(UserCommand.moveLeft);
+                  updateDirection(UserCommand.undo);
                 },
                 onTapUp: (dets) {
                   updateDirection(UserCommand.none);
                 },
                 onLongPressDown: () {
-                  updateDirection(UserCommand.moveLeft);
+                  updateDirection(UserCommand.undo);
                 },
                 onLongPressEnd: (dets) {
                   updateDirection(UserCommand.none);
                 },
               ),
-              ArrowKey(
-                icons: Icons.keyboard_arrow_right,
+              MenuKey(
+                icons: Icons.redo,
                 onTapDown: (det) {
-                  updateDirection(UserCommand.moveRight);
+                  updateDirection(UserCommand.redo);
                 },
                 onTapUp: (dets) {
                   updateDirection(UserCommand.none);
                 },
                 onLongPressDown: () {
-                  updateDirection(UserCommand.moveRight);
+                  updateDirection(UserCommand.redo);
                 },
                 onLongPressEnd: (dets) {
                   updateDirection(UserCommand.none);
@@ -77,34 +76,19 @@ class _NavigationKeysState extends State<NavigationKeys> {
               ),
             ],
           ),
-          ArrowKey(
-            icons: Icons.keyboard_arrow_down,
-            onTapDown: (det) {
-              updateDirection(UserCommand.moveDown);
-            },
-            onTapUp: (dets) {
-              updateDirection(UserCommand.none);
-            },
-            onLongPressDown: () {
-              updateDirection(UserCommand.moveDown);
-            },
-            onLongPressEnd: (dets) {
-              updateDirection(UserCommand.none);
-            },
-          ),
         ],
       ),
     );
   }
 
   void updateDirection(UserCommand newUserCommand) {
-    direction = newUserCommand;
-    widget.onDirectionChanged!(direction);
+    userCommand = newUserCommand;
+    widget.onMenuSelected!(userCommand);
   }
 }
 
-class ArrowKey extends StatelessWidget {
-  const ArrowKey({
+class MenuKey extends StatelessWidget {
+  const MenuKey({
     Key? key,
     required this.icons,
     required this.onTapDown,
@@ -129,7 +113,7 @@ class ArrowKey extends StatelessWidget {
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: const Color(0x88ffffff),
-          borderRadius: BorderRadius.circular(60),
+          borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           icons,

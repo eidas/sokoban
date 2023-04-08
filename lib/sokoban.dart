@@ -50,6 +50,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     super.update(dt);
   }
 
+  /// 面データからスプライト生成
   void loadGameSegments() {
     var pos = IntVector2(0, 0);
     for (int j = 0; j < tileColumns; j++) {
@@ -106,6 +107,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }
   }
 
+  /// ゲーム初期化
   Future<void> initializeGame() async {
     _crates = [];
     await readStageDataFromFile('assets/stageData/stage.001.dat');
@@ -130,47 +132,27 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     replayList = [ReplayData(board, playerPosition, null)];
   }
 
-  // 仮想キーの入力イベント
-  void onArrowKeyChanged(Direction direction) {
-    // print('${direction}');
-    switch (direction) {
-      case Direction.left:
-        userCommands.add(UserCommand.moveLeft);
-        break;
-      case Direction.right:
-        userCommands.add(UserCommand.moveRight);
-        break;
-      case Direction.up:
-        userCommands.add(UserCommand.moveUp);
-        break;
-      case Direction.down:
-        userCommands.add(UserCommand.moveDown);
-        break;
-      default:
-        break;
-    }
+  /// 仮想キーの入力イベント受付
+  void onVirtualKeyChanged(UserCommand userCommand) {
+    // print('${userCommand}');
+    userCommands.add(userCommand);
   }
 
-  // キーボードからの入力イベント
+  /// キーボードからの入力イベント受付
   @override
   KeyEventResult onKeyEvent(
     RawKeyEvent event,
     Set<LogicalKeyboardKey> keysPressed,
   ) {
-    var horizontalDirection = 0;
-    var verticalDirection = 0;
-
     // プレイヤーが移動中はキーイベントを無視
     if (_player.isMoving) return KeyEventResult.ignored;
 
     // Undo,Redoのキー入力処理
     if (keysPressed.contains(LogicalKeyboardKey.digit1)) {
       userCommands.add(UserCommand.undo);
-      //     undo();
       return KeyEventResult.handled;
     } else if (keysPressed.contains(LogicalKeyboardKey.digit2)) {
       userCommands.add(UserCommand.redo);
-//      redo();
       return KeyEventResult.handled;
     }
 
@@ -191,32 +173,10 @@ class SokobanGame extends FlameGame with KeyboardEvents {
       userCommands.add(UserCommand.moveDown);
     }
 
-    // // 各方向キーの入力
-    // horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyA) ||
-    //         keysPressed.contains(LogicalKeyboardKey.arrowLeft))
-    //     ? -1
-    //     : 0;
-    // horizontalDirection += (keysPressed.contains(LogicalKeyboardKey.keyD) ||
-    //         keysPressed.contains(LogicalKeyboardKey.arrowRight))
-    //     ? 1
-    //     : 0;
-    // verticalDirection += (keysPressed.contains(LogicalKeyboardKey.keyW) ||
-    //         keysPressed.contains(LogicalKeyboardKey.arrowUp))
-    //     ? -1
-    //     : 0;
-    // verticalDirection += (keysPressed.contains(LogicalKeyboardKey.keyS) ||
-    //         keysPressed.contains(LogicalKeyboardKey.arrowDown))
-    //     ? 1
-    //     : 0;
-
-    // if (horizontalDirection.abs() + verticalDirection.abs() == 1) {
-    //   playerMove(horizontalDirection, verticalDirection);
-    //   return KeyEventResult.handled;
-    // }
     return KeyEventResult.handled;
   }
 
-  // ユーザーコマンドの実行
+  /// ユーザーコマンドの実行
   void executeUserCommand() {
     var horizontalDirection = 0;
     var verticalDirection = 0;
@@ -224,7 +184,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     // プレイヤーが移動中はユーザーコマンドを無視
     if (_player.isMoving) return;
 
-    while (!userCommands.isEmpty) {
+    while (userCommands.isNotEmpty) {
       var userCommand = userCommands.removeLast();
       switch (userCommand) {
         case UserCommand.undo:
@@ -256,6 +216,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }
   }
 
+  /// プレイヤー移動
   void playerMove(int horizontalDirection, int verticalDirection) {
     IntVector2 gridMoveTo = _player.gridPosition +
         IntVector2(horizontalDirection, verticalDirection);
@@ -315,24 +276,25 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }());
   }
 
-  // 1手もどす(アンドゥ)
+  /// 1手もどす(アンドゥ)
   void undo() {
     if (gameStep <= 0) return; // step=0の時はundoできない
     gameStep--;
     var currentReplayData = replayList[gameStep];
     var nextReplayData = replayList[gameStep + 1];
     board = currentReplayData.board;
-    // TODO: プレイヤー移動
+    // プレイヤー移動
     playerPosition = currentReplayData.player_pos;
-    _player.moveTo(playerPosition, isReverse: true);
-    // TODO: 荷物移動
+    _player.moveTo(playerPosition, isReverse: true, speedFactor: 0.5);
+    // 荷物移動
     if (nextReplayData.crate_pos != null) {
       var crate = findCrate(nextReplayData.crate_pos!); // 次の手の
       if (crate == null) {
         resetCrateSprites();
       } else {
-        crate.moveTo(nextReplayData.player_pos,
-            isGoal(nextReplayData.player_pos), () {});
+        crate.moveTo(
+            nextReplayData.player_pos, isGoal(nextReplayData.player_pos), () {},
+            speedFactor: 0.5);
       }
     }
 
@@ -343,17 +305,17 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }());
   }
 
-  // 1手すすめる(リドゥ) - リプレイリストがある時だけ
+  /// 1手すすめる(リドゥ) - リプレイリストがある時だけ
   void redo() {
     if (replayList.length <= gameStep + 1) return; // 次にリプレイデータがない時はredoできない
     gameStep++;
     var currentReplayData = replayList[gameStep];
-    var previousReplayData = replayList[gameStep - 1];
+    // var previousReplayData = replayList[gameStep - 1];
     board = currentReplayData.board;
-    // TODO: プレイヤー移動
+    // プレイヤー移動
     playerPosition = currentReplayData.player_pos;
-    _player.moveTo(playerPosition);
-    // TODO: 荷物移動
+    _player.moveTo(playerPosition, speedFactor: 0.5);
+    // 荷物移動
     if (currentReplayData.crate_pos != null) {
       var crate =
           findCrate(currentReplayData.player_pos!); // 1手前のプレイヤーの位置が荷物の元の位置
@@ -361,7 +323,8 @@ class SokobanGame extends FlameGame with KeyboardEvents {
         resetCrateSprites();
       } else {
         crate.moveTo(currentReplayData.crate_pos!,
-            isGoal(currentReplayData.crate_pos!), () {});
+            isGoal(currentReplayData.crate_pos!), () {},
+            speedFactor: 0.5);
       }
     }
 
@@ -372,6 +335,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }());
   }
 
+  /// 荷物のスプライトを探す
   Crate? findCrate(IntVector2 gridPosition) {
     return _crates.firstWhereOrNull(
       (element) =>
@@ -380,11 +344,13 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     );
   }
 
+  /// 荷物がゴール上にあるかの判定
   bool isGoal(IntVector2 pos) {
     var tile = board.boardData[pos.y][pos.x];
     return tile == Tile.Goal || tile == Tile.CrateAndGoal;
   }
 
+  /// 荷物のスプライトをリセットし再作成
   void resetCrateSprites() {
     children.whereType<Crate>().map((e) => remove(e));
     _crates = [];

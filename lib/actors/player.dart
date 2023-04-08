@@ -37,7 +37,11 @@ class Player extends SpriteAnimationComponent
   IntVector2 get gridPositionMoveTo => _gridPositionMoveTo;
 
   // 移動
-  bool moveTo(IntVector2 newPosition, {bool isReverse = false}) {
+  bool moveTo(
+    IntVector2 newPosition, {
+    bool isReverse = false,
+    double speedFactor = 1.0,
+  }) {
     _gridPositionMoveTo = newPosition;
     IntVector2 deltaVec = _gridPositionMoveTo - gridPosition;
     direction = deltaVec.x.abs() > deltaVec.y.abs()
@@ -66,7 +70,7 @@ class Player extends SpriteAnimationComponent
       MoveEffect.to(
         _gridToPixelPosition(
             _gridPositionMoveTo), //_gridPositionMoveTo * Constants.tileSize + offset,
-        EffectController(duration: 0.2),
+        EffectController(duration: Constants.defaultMoveTime * speedFactor),
         onComplete: () {
           // アニメーション完了時にisMovingほかを更新
           isMoving = false;
