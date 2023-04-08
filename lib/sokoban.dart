@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
-import 'helper/direction.dart';
 import 'helper/user_command.dart';
 import 'objects/wall.dart';
 import 'objects/ground.dart';
@@ -381,11 +380,12 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }
   }
 
+  /// ゲームのリセット
   void reset() {
     initializeGame();
   }
 
-// for Test
+  /// ステージデータほかのデータ表示(デバッグ用)
   void stageViewer() {
     for (var s in getXsokobanString(board)) {
       print(s);
