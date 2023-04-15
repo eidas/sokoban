@@ -3,7 +3,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:sokoban/pages/game_main.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
@@ -140,6 +140,10 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
     // ステータステキスト表示用コンポーネント追加
     add(Hud());
+
+    // BGM
+    FlameAudio.bgm.initialize();
+    FlameAudio.bgm.play('TEC07366OLK_TEC1.mp3', volume: 0.8);
   }
 
   /// 仮想キーの入力イベント受付
@@ -394,6 +398,11 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   /// ゲームのリセット
   void reset() async {
     await initializeGame();
+  }
+
+  /// ゲーム終了
+  void exitGame() async {
+    FlameAudio.bgm.dispose();
   }
 
   /// ステージデータほかのデータ表示(デバッグ用)

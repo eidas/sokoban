@@ -4,7 +4,6 @@ Flutter上のゲームエンジンFlameで練習用に作った倉庫番
 
 ## ToDo(残作業)
 
-- メッセージの国際化
 - 音楽をつける
 - ステージ選択画面
 - 異なる解像度への対応
@@ -14,6 +13,9 @@ Flutter上のゲームエンジンFlameで練習用に作った倉庫番
 
 キャラクター等の画像は以下のサイトのものを利用させていただきました。
 [https://opengameart.org/content/sokoban-100-tiles]
+
+音楽は以下のサイトで自動生成したものを使用しました。
+[https://fimmigrm.com/]
 
 また仮想十字キーのコードは以下のサイトを参考にさせていただきました。
 [https://blog.codemagic.io/flutter-flame-game-development-japanese/]
