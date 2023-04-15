@@ -13,16 +13,16 @@ Xsokoban形式
 人＋ゴール:	  +
 荷物＋ゴール:	*
 */
-// const List<String> const_stageDataStr = [
-//   r'########',
-//   r'#.   @ #',
-//   r'#    $ #',
-//   r'#$#  . #',
-//   r'# # $  #',
-//   r'#     ##',
-//   r'#   . ##',
-//   r'########',
-// ];
+const List<String> const_stageDataStr = [
+  r'########',
+  r'#.   @ #',
+  r'#    $ #',
+  r'#$#  . #',
+  r'# # $  #',
+  r'#     ##',
+  r'#   . ##',
+  r'########',
+];
 
 // 面データを内部で持つ持ち方は以下のとおり
 /* List<List<int>> stageData

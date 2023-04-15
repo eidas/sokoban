@@ -2,6 +2,8 @@ import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+import 'package:sokoban/pages/game_main.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
@@ -10,22 +12,26 @@ import 'objects/wall.dart';
 import 'objects/ground.dart';
 import 'objects/goal.dart';
 import 'managers/stage_manager.dart';
-import 'package:flutter/material.dart';
 import 'package:sokoban/utils/int_vector2.dart';
+import 'package:sokoban/overlays/hud.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SokobanGame extends FlameGame with KeyboardEvents {
-  SokobanGame();
+  SokobanGame(this.context, this.localizations, this.stageNumber);
 
+  final BuildContext context;
+  final AppLocalizations localizations;
+  final int stageNumber;
   IntVector2 playerPosition = IntVector2(-1, -1);
   Player _player = Player(gridPosition: IntVector2(-1, -1));
   List<Crate> _crates = [];
   // double objectSpeed = 0.0;
-  int gameStep = 0;
+  int gameSteps = 0;
   List<UserCommand> userCommands = [];
 
   @override
   Color backgroundColor() {
-    return Color.fromARGB(255, 24, 59, 76);
+    return const Color.fromARGB(255, 24, 59, 76);
   }
 
   @override
@@ -109,14 +115,16 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   /// ゲーム初期化
   Future<void> initializeGame() async {
     _crates = [];
-    await readStageDataFromFile('assets/stageData/stage.001.dat');
-    // readStageData(const_stageDataStr);
+    userCommands = [];
+    // await readStageDataFromFile(
+    //     'assets/stageData/stage.${stageNumber.toString().padLeft(3, '0')}.dat');
+    readStageData(const_stageDataStr);
     removeAll(children); // 2回目以降のため追加されたコンポーネントを一度全部削除
     loadGameSegments();
-    for (var _crate in _crates) {
-      add(_crate);
+    for (var crate in _crates) {
+      add(crate);
     }
-    gameStep = 0;
+    gameSteps = 0;
 
     // プレイヤー初期配置
     playerPosition = IntVector2(playerX, playerY);
@@ -129,6 +137,9 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
     // リプレイデータstep0作成
     replayList = [ReplayData(board, playerPosition, null)];
+
+    // ステータステキスト表示用コンポーネント追加
+    add(Hud());
   }
 
   /// 仮想キーの入力イベント受付
@@ -144,7 +155,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     Set<LogicalKeyboardKey> keysPressed,
   ) {
     // プレイヤーが移動中はキーイベントを無視
-    if (_player.isMoving) return KeyEventResult.ignored;
+    if (_player.isMoving) return KeyEventResult.handled;
 
     // Undo,Redoのキー入力処理
     if (keysPressed.contains(LogicalKeyboardKey.digit1)) {
@@ -260,12 +271,12 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     _player.moveTo(gridMoveTo);
 
     // リプレイリスト更新
-    if (gameStep + 1 < replayList.length) {
+    if (gameSteps + 1 < replayList.length) {
       // 現在のgameStepがリプレイリストの途中であれば、gameStep以降のリプレイリストを破棄
-      replayList.removeRange(gameStep + 1, replayList.length);
+      replayList.removeRange(gameSteps + 1, replayList.length);
     }
     replayList.add(ReplayData(newBoard, playerPosition, crateNewPosition));
-    gameStep++;
+    gameSteps++;
     board = newBoard;
 
     // デバッグ時のみ実行されます
@@ -277,10 +288,10 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
   /// 1手もどす(アンドゥ)
   void undo() {
-    if (gameStep <= 0) return; // step=0の時はundoできない
-    gameStep--;
-    var currentReplayData = replayList[gameStep];
-    var nextReplayData = replayList[gameStep + 1];
+    if (gameSteps <= 0) return; // step=0の時はundoできない
+    gameSteps--;
+    var currentReplayData = replayList[gameSteps];
+    var nextReplayData = replayList[gameSteps + 1];
     board = currentReplayData.board;
     // プレイヤー移動
     playerPosition = currentReplayData.player_pos;
@@ -306,9 +317,9 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
   /// 1手すすめる(リドゥ) - リプレイリストがある時だけ
   void redo() {
-    if (replayList.length <= gameStep + 1) return; // 次にリプレイデータがない時はredoできない
-    gameStep++;
-    var currentReplayData = replayList[gameStep];
+    if (replayList.length <= gameSteps + 1) return; // 次にリプレイデータがない時はredoできない
+    gameSteps++;
+    var currentReplayData = replayList[gameSteps];
     // var previousReplayData = replayList[gameStep - 1];
     board = currentReplayData.board;
     // プレイヤー移動
@@ -317,7 +328,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     // 荷物移動
     if (currentReplayData.crate_pos != null) {
       var crate =
-          findCrate(currentReplayData.player_pos!); // 1手前のプレイヤーの位置が荷物の元の位置
+          findCrate(currentReplayData.player_pos); // 1手前のプレイヤーの位置が荷物の元の位置
       if (crate == null) {
         resetCrateSprites();
       } else {
@@ -381,8 +392,8 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   }
 
   /// ゲームのリセット
-  void reset() {
-    initializeGame();
+  void reset() async {
+    await initializeGame();
   }
 
   /// ステージデータほかのデータ表示(デバッグ用)
@@ -390,7 +401,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     for (var s in getXsokobanString(board)) {
       print(s);
     }
-    print('step=${gameStep}');
+    print('step=${gameSteps}');
     print('player x,y=${playerPosition.x},${playerPosition.y}');
   }
 }

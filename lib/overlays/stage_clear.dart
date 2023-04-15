@@ -41,8 +41,8 @@ class StageClear extends StatelessWidget {
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () {
-                    game.reset();
                     game.overlays.remove('StageClear');
+                    game.reset();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: whiteTextColor,

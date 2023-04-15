@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:sokoban/helper/user_command.dart';
 import 'package:sokoban/sokoban.dart';

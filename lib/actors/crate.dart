@@ -16,7 +16,7 @@ class Crate extends SpriteAnimationComponent
   bool isMoving = false;
   bool isOnGoal = false;
 
-  ColorEffect? colorEffect = null;
+  ColorEffect? colorEffect;
 
   Crate({
     required this.gridPosition,
@@ -77,14 +77,14 @@ class Crate extends SpriteAnimationComponent
       ),
     );
     if (isOnGoal) {
-      this.addColorEffect();
+      addColorEffect();
     }
   }
 
-  EffectController? effectController = null;
+  EffectController? effectController;
   void addColorEffect() {
     colorEffect = ColorEffect(
-      Color.fromARGB(255, 255, 255, 255),
+      const Color.fromARGB(255, 255, 255, 255),
       const Offset(0.0, 1.0),
       EffectController(duration: 1.2, reverseDuration: 1.2, infinite: true),
     );
@@ -97,7 +97,7 @@ class Crate extends SpriteAnimationComponent
     // nullでない時だけremoveするようにした。
     if (colorEffect != null) remove(colorEffect!);
     colorEffect = ColorEffect(
-        Color.fromARGB(0, 0, 0, 0),
+        const Color.fromARGB(0, 0, 0, 0),
         const Offset(0.0, 0.0),
         EffectController(duration: 0.1), onComplete: () {
       colorEffect = null; // Effect自体が終了してもnullにならないようなので自身でnullにしている

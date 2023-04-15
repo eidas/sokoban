@@ -1,0 +1,6 @@
+{
+  "@@locale": "ja",
+  "title": "倉庫番 日本語",
+  "stepsText": "歩数: {steps}",
+  "stageText": "ステージ: {stage}"
+}

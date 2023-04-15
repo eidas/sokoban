@@ -120,6 +120,6 @@ class Player extends SpriteAnimationComponent
     ], loop: true);
 
     position = _gridToPixelPosition(gridPosition);
-    animation = downAnimation;
+    animation = downAnimation; // 初期状態のキャラの向き
   }
 }

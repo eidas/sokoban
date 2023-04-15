@@ -1,0 +1,27 @@
+{
+  "@@locale": "en",
+  "title": "SokobanGame Localizations",
+  "@title": {
+    "description": "This is SokobanGame Localizations File."
+  },
+  "stepsText": "Steps: {steps}",
+  "@stepsText": {
+    "description": "画面に表示する歩行数",
+    "placeholders": {
+      "steps": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+  "stageText": "Stage: {stage}",
+  "@stageText": {
+    "description": "画面に表示するステージ番号",
+    "placeholders": {
+      "stage": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  }
+}
