@@ -6,8 +6,10 @@ import 'package:sokoban/overlays/main_menu.dart';
 import 'package:sokoban/sokoban.dart';
 import 'package:sokoban/overlays/navidatiion_keys.dart';
 import 'package:sokoban/overlays/menu_keys.dart';
+import 'package:sokoban/helper/setting.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
+import 'package:flame_audio/flame_audio.dart';
 
 class GameMain extends StatelessWidget {
   const GameMain({
@@ -19,15 +21,21 @@ class GameMain extends StatelessWidget {
   }
 }
 
-class InnerWidget extends StatelessWidget {
+class InnerWidget extends StatefulWidget {
   const InnerWidget({
     super.key,
   });
 
   @override
+  State<InnerWidget> createState() => _InnerWidgetState();
+}
+
+class _InnerWidgetState extends State<InnerWidget> {
+  @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizationWrapper(context).appLocalizations;
-    gameFactory() => SokobanGame(context, localizations, 1);
+    final setting = Setting(false, 1);
+    gameFactory() => SokobanGame(context, localizations, setting, '001');
     return GameWidget<SokobanGame>.controlled(
       gameFactory: gameFactory,
       overlayBuilderMap: {
@@ -50,6 +58,13 @@ class InnerWidget extends StatelessWidget {
       },
       initialActiveOverlays: const ['NavigationKey', 'MenuKey'],
     );
+  }
+
+  @override
+  void dispose() {
+    FlameAudio.bgm.audioPlayer.stop();
+    FlameAudio.bgm.dispose();
+    super.dispose();
   }
 }
 

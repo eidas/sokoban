@@ -6,6 +6,7 @@ class StageClear extends StatelessWidget {
   // Reference to parent game.
   final SokobanGame game;
   const StageClear({super.key, required this.game});
+  final String stageClearOverlayKey = 'StageClear';
 
   @override
   Widget build(BuildContext context) {
@@ -17,39 +18,62 @@ class StageClear extends StatelessWidget {
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(10.0),
-          height: 200,
+          height: 400,
           width: 300,
           decoration: const BoxDecoration(
             color: blackTextColor,
-            borderRadius: const BorderRadius.all(
+            borderRadius: BorderRadius.all(
               Radius.circular(20),
             ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Stage Clear!',
-                style: TextStyle(
+              Text(
+                game.localizations.stageClearText,
+                style: const TextStyle(
                   color: whiteTextColor,
                   fontSize: 24,
                 ),
               ),
               const SizedBox(height: 40),
+              // NextStage ボタン
               SizedBox(
                 width: 200,
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () {
-                    game.overlays.remove('StageClear');
+                    game.overlays.remove(stageClearOverlayKey);
                     game.reset();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: whiteTextColor,
                   ),
-                  child: const Text(
-                    'Play Again',
-                    style: TextStyle(
+                  child: Text(
+                    game.localizations.nextStageText,
+                    style: const TextStyle(
+                      fontSize: 28.0,
+                      color: blackTextColor,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              // BackToTitle ボタン
+              SizedBox(
+                width: 200,
+                height: 75,
+                child: ElevatedButton(
+                  onPressed: () {
+                    game.overlays.remove(stageClearOverlayKey);
+                    Navigator.of(context).pop();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: whiteTextColor,
+                  ),
+                  child: Text(
+                    game.localizations.backToTitleText,
+                    style: const TextStyle(
                       fontSize: 28.0,
                       color: blackTextColor,
                     ),

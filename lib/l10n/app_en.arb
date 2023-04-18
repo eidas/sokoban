@@ -1,8 +1,8 @@
 {
   "@@locale": "en",
-  "title": "SokobanGame Localizations",
+  "title": "Sokoban",
   "@title": {
-    "description": "This is SokobanGame Localizations File."
+    "description": "Sokoban Title"
   },
   "stepsText": "Steps: {steps}",
   "@stepsText": {
@@ -19,9 +19,21 @@
     "description": "画面に表示するステージ番号",
     "placeholders": {
       "stage": {
-        "type": "int",
+        "type": "String",
         "format": "compact"
       }
     }
+  },
+  "stageClearText": "Stage Clear!",
+  "@stepsText": {
+    "description": "ステージクリアのテキスト"
+  },
+  "nextStageText": "Next Stage",
+  "@stepsText": {
+    "description": "次ステージボタンのテキスト"
+  },
+  "backToTitleText": "Back To Title",
+  "@stepsText": {
+    "description": "タイトル画面に戻るのテキスト"
   }
 }

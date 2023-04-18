@@ -1,6 +1,9 @@
 {
   "@@locale": "ja",
-  "title": "倉庫番 日本語",
+  "title": "倉庫番",
   "stepsText": "歩数: {steps}",
-  "stageText": "ステージ: {stage}"
+  "stageText": "ステージ: {stage}",
+  "stageClearText": "ステージクリア!",
+  "nextStageText": "次のステージへ",
+  "backToTitleText": "タイトルへ戻る"
 }

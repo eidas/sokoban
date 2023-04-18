@@ -1,9 +1,11 @@
+import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:sokoban/constants.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
@@ -15,13 +17,15 @@ import 'managers/stage_manager.dart';
 import 'package:sokoban/utils/int_vector2.dart';
 import 'package:sokoban/overlays/hud.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:sokoban/helper/setting.dart';
 
 class SokobanGame extends FlameGame with KeyboardEvents {
-  SokobanGame(this.context, this.localizations, this.stageNumber);
+  SokobanGame(this.context, this.localizations, this.setting, this.stageName);
 
   final BuildContext context;
   final AppLocalizations localizations;
-  final int stageNumber;
+  final Setting setting;
+  final String stageName;
   IntVector2 playerPosition = IntVector2(-1, -1);
   Player _player = Player(gridPosition: IntVector2(-1, -1));
   List<Crate> _crates = [];
@@ -58,7 +62,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   /// 面データからスプライト生成
   void loadGameSegments() {
     var pos = IntVector2(0, 0);
-    for (int j = 0; j < tileColumns; j++) {
+    for (int j = 0; j < tileRows; j++) {
       for (int i = 0; i < tileColumns; i++) {
         pos = IntVector2(i, j);
         switch (board.boardData[j][i]) {
@@ -116,9 +120,8 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   Future<void> initializeGame() async {
     _crates = [];
     userCommands = [];
-    // await readStageDataFromFile(
-    //     'assets/stageData/stage.${stageNumber.toString().padLeft(3, '0')}.dat');
-    readStageData(const_stageDataStr);
+    await readStageDataFromFile('assets/stageData/stage${stageName}.dat');
+    // readStageData(const_stageDataStr);
     removeAll(children); // 2回目以降のため追加されたコンポーネントを一度全部削除
     loadGameSegments();
     for (var crate in _crates) {
@@ -133,7 +136,12 @@ class SokobanGame extends FlameGame with KeyboardEvents {
       xOffset: 0.0,
     );
     add(_player);
-    // camera.followComponent(_player);
+    // camera.followComponent(
+    //   _player,
+    //   relativeOffset: Anchor.topLeft,
+    //   worldBounds: Rect.fromLTWH(0, 0, tileColumns * Constants.tileSize - 1,
+    //       tileRows * Constants.tileSize - 1),
+    // );
 
     // リプレイデータstep0作成
     replayList = [ReplayData(board, playerPosition, null)];
@@ -142,8 +150,10 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     add(Hud());
 
     // BGM
-    FlameAudio.bgm.initialize();
-    FlameAudio.bgm.play('TEC07366OLK_TEC1.mp3', volume: 0.8);
+    if (setting.bgmOn) {
+      FlameAudio.bgm.initialize();
+      FlameAudio.bgm.play('TEC07366OLK_TEC1.mp3', volume: setting.bgmVolume);
+    }
   }
 
   /// 仮想キーの入力イベント受付
@@ -397,11 +407,13 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
   /// ゲームのリセット
   void reset() async {
+    exitGame();
     await initializeGame();
   }
 
   /// ゲーム終了
   void exitGame() async {
+    FlameAudio.bgm.audioPlayer.stop();
     FlameAudio.bgm.dispose();
   }
 
