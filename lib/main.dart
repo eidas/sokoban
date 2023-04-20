@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:sokoban/pages/game_main.dart';
 import 'package:sokoban/pages/title_page.dart';
+import 'package:sokoban/pages/select_stage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
@@ -24,5 +25,6 @@ void main() {
       routes: <String, WidgetBuilder>{
         '/home': (BuildContext context) => const TitlePage(),
         '/gamepage': (BuildContext context) => const GameMain(),
+        '/selectpage': (BuildContext context) => const SelectStage(),
       }));
 }

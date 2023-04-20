@@ -14,7 +14,7 @@ class TitlePage extends StatelessWidget {
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(10.0),
-          height: 250,
+          height: 500,
           width: 300,
           decoration: const BoxDecoration(
             color: blackTextColor,
@@ -29,22 +29,43 @@ class TitlePage extends StatelessWidget {
                 AppLocalizations.of(context)!.title,
                 style: const TextStyle(
                   color: whiteTextColor,
-                  fontSize: 24,
+                  fontSize: 28,
                 ),
               ),
               const SizedBox(height: 40),
+              // New Game Button
               SizedBox(
-                width: 200,
+                width: 240,
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pushNamed("/gamepage"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: whiteTextColor,
                   ),
-                  child: const Text(
-                    'Play',
-                    style: TextStyle(
-                      fontSize: 40.0,
+                  child: Text(
+                    AppLocalizations.of(context)!.newGameText,
+                    style: const TextStyle(
+                      fontSize: 30.0,
+                      color: blackTextColor,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 40),
+              // Select Stage Button
+              SizedBox(
+                width: 240,
+                height: 75,
+                child: ElevatedButton(
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed("/selectpage"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: whiteTextColor,
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.selectStageText,
+                    style: const TextStyle(
+                      fontSize: 30.0,
                       color: blackTextColor,
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:sokoban/utils/int_vector2.dart';
 import 'dart:io';
 
@@ -79,6 +80,13 @@ Future<void> readStageDataFromFile(String filePath) async {
   List<String> stageDataStr = [];
   //ファイル読み込み処理
   stageDataStr = await (File(filePath).readAsLines());
+  readStageData(stageDataStr);
+}
+
+// Assetsからステージデータを読み込み
+Future<void> loadAssetsStageDataTextFile(String filePath) async {
+  final stageDataText = await rootBundle.loadString(filePath);
+  List<String> stageDataStr = stageDataText.split(RegExp(r'\r?\n'));
   readStageData(stageDataStr);
 }
 

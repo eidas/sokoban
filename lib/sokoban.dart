@@ -20,12 +20,14 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sokoban/helper/setting.dart';
 
 class SokobanGame extends FlameGame with KeyboardEvents {
-  SokobanGame(this.context, this.localizations, this.setting, this.stageName);
+  SokobanGame(this.context, this.localizations, this.setting, this.stageName,
+      this.isLastStage);
 
   final BuildContext context;
   final AppLocalizations localizations;
   final Setting setting;
   final String stageName;
+  final bool isLastStage;
   IntVector2 playerPosition = IntVector2(-1, -1);
   Player _player = Player(gridPosition: IntVector2(-1, -1));
   List<Crate> _crates = [];
@@ -120,7 +122,8 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   Future<void> initializeGame() async {
     _crates = [];
     userCommands = [];
-    await readStageDataFromFile('assets/stageData/stage${stageName}.dat');
+    await loadAssetsStageDataTextFile('assets/stageData/${stageName}');
+    // await readStageDataFromFile('assets/stageData/${stageName}');
     // readStageData(const_stageDataStr);
     removeAll(children); // 2回目以降のため追加されたコンポーネントを一度全部削除
     loadGameSegments();

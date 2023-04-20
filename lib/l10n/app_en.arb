@@ -35,5 +35,13 @@
   "backToTitleText": "Back To Title",
   "@stepsText": {
     "description": "タイトル画面に戻るのテキスト"
+  },
+  "newGameText": "New Game",
+  "@stepsText": {
+    "description": "New Game"
+  },
+  "selectStageText": "Select Stage",
+  "@stepsText": {
+    "description": "Select Stage"
   }
 }

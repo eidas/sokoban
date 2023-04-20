@@ -21,7 +21,8 @@ class Hud extends PositionComponent with HasGameRef<SokobanGame> {
   double _gameSizeX = 0.0;
   int _gameSteps = 0;
 
-  String get stageText => game.localizations.stageText(game.stageName);
+  String get stageText =>
+      game.localizations.stageText(game.stageName.replaceFirst('.dat', ''));
   String get stepsText => game.localizations.stepsText(game.gameSteps);
   Vector2 get stepsPosition => Vector2(game.size.x - 10, 10);
 

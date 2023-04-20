@@ -11,31 +11,37 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flame_audio/flame_audio.dart';
 
-class GameMain extends StatelessWidget {
+class GameMain extends StatefulWidget {
   const GameMain({
     super.key,
   });
+
   @override
-  Widget build(BuildContext context) {
-    return const InnerWidget();
-  }
+  State<GameMain> createState() => _GameMainState();
 }
 
-class InnerWidget extends StatefulWidget {
-  const InnerWidget({
-    super.key,
-  });
+class _GameMainState extends State<GameMain> {
+  _GameMainState();
 
-  @override
-  State<InnerWidget> createState() => _InnerWidgetState();
-}
-
-class _InnerWidgetState extends State<InnerWidget> {
   @override
   Widget build(BuildContext context) {
+    final arguments = ModalRoute.of(context)!.settings.arguments;
+    late final String stageName;
+    if (arguments != null) {
+      stageName = arguments.toString();
+    } else {
+      stageName = '001.dat';
+    }
+
     final localizations = AppLocalizationWrapper(context).appLocalizations;
     final setting = Setting(false, 1);
-    gameFactory() => SokobanGame(context, localizations, setting, '001');
+    gameFactory() => SokobanGame(
+          context,
+          localizations,
+          setting,
+          stageName,
+          false,
+        );
     return GameWidget<SokobanGame>.controlled(
       gameFactory: gameFactory,
       overlayBuilderMap: {
