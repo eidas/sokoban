@@ -20,14 +20,17 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sokoban/helper/setting.dart';
 
 class SokobanGame extends FlameGame with KeyboardEvents {
-  SokobanGame(this.context, this.localizations, this.setting, this.stageName,
-      this.isLastStage);
+  SokobanGame(
+    this.context,
+    this.localizations,
+    this.setting,
+    this.stageName,
+  );
 
   final BuildContext context;
   final AppLocalizations localizations;
   final Setting setting;
   final String stageName;
-  final bool isLastStage;
   IntVector2 playerPosition = IntVector2(-1, -1);
   Player _player = Player(gridPosition: IntVector2(-1, -1));
   List<Crate> _crates = [];

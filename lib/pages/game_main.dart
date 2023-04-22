@@ -26,11 +26,11 @@ class _GameMainState extends State<GameMain> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments;
-    late final String stageName;
-    if (arguments != null) {
-      stageName = arguments.toString();
-    } else {
-      stageName = '001.dat';
+    String stageName = '001.dat';
+    String nextStageName = '';
+    if (arguments != null && arguments is Map) {
+      stageName = arguments['stageName'].toString();
+      nextStageName = arguments['nextStageName'] ?? '';
     }
 
     final localizations = AppLocalizationWrapper(context).appLocalizations;
@@ -40,7 +40,6 @@ class _GameMainState extends State<GameMain> {
           localizations,
           setting,
           stageName,
-          false,
         );
     return GameWidget<SokobanGame>.controlled(
       gameFactory: gameFactory,

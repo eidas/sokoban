@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:sokoban/sokoban.dart';
+import 'package:sokoban/helper/stage_data.dart';
 
 class StageClear extends StatelessWidget {
   // Reference to parent game.
@@ -12,6 +13,7 @@ class StageClear extends StatelessWidget {
   Widget build(BuildContext context) {
     const blackTextColor = Color.fromRGBO(0, 0, 0, 1.0);
     const whiteTextColor = Color.fromRGBO(255, 255, 255, 1.0);
+    String? nextStageName = StageData.getNextStage(game.stageName);
 
     return Material(
       color: Colors.transparent,
@@ -42,10 +44,14 @@ class StageClear extends StatelessWidget {
                 width: 200,
                 height: 75,
                 child: ElevatedButton(
-                  onPressed: () {
-                    game.overlays.remove(stageClearOverlayKey);
-                    game.reset();
-                  },
+                  onPressed: nextStageName == null
+                      ? null
+                      : () {
+                          Navigator.of(context)
+                              .pushReplacementNamed('/gamepage', arguments: {
+                            'stageName': nextStageName,
+                          });
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: whiteTextColor,
                   ),

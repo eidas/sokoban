@@ -29,14 +29,7 @@ class MainMenu extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                '倉庫番',
-                style: TextStyle(
-                  color: whiteTextColor,
-                  fontSize: 24,
-                ),
-              ),
-              const SizedBox(height: 40),
+              //
               SizedBox(
                 width: 200,
                 height: 75,

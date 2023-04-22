@@ -7,5 +7,6 @@
   "nextStageText": "次のステージへ",
   "backToTitleText": "タイトルへ戻る",
   "newGameText": "最初から",
-  "selectStageText": "ステージを選ぶ"
+  "selectStageText": "ステージを選ぶ",
+  "instructionText": "WASDか矢印キーで移動\n荷物をゴールに運ぼう!"
 }

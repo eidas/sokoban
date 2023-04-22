@@ -72,11 +72,10 @@ class TitlePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                '''Use WASD or Arrow Keys for movement.
-                 Move crates to goals!''',
+              Text(
+                AppLocalizations.of(context)!.instructionText,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: whiteTextColor,
                   fontSize: 14,
                 ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:sokoban/helper/stage_data.dart';
 
 class SelectStage extends StatefulWidget {
   const SelectStage({Key? key}) : super(key: key);
@@ -15,12 +16,12 @@ class _SelectStageState extends State<SelectStage> {
   late Future<List<String>> _fileListFuture;
   late List<String> _fileList;
   String? _selectedFile;
+  // String? _nextFile;
 
   @override
   void initState() {
     super.initState();
-    // _fileListFuture = _getFileListFromStageData();
-    _fileListFuture = getAllAssets();
+    _fileListFuture = StageData.stageDataList;
   }
 
   @override
@@ -52,8 +53,10 @@ class _SelectStageState extends State<SelectStage> {
                       _selectedFile = _fileList[index];
                     });
                     // Navigator.of(context).pop(_selectedFile);
-                    Navigator.of(context).pushReplacementNamed('/gamepage',
-                        arguments: _selectedFile);
+                    Navigator.of(context)
+                        .pushReplacementNamed('/gamepage', arguments: {
+                      'stageName': _selectedFile,
+                    });
                   },
                 );
               },
@@ -66,40 +69,5 @@ class _SelectStageState extends State<SelectStage> {
         },
       ),
     );
-  }
-
-  // Future<List<String>> _getFileListFromStageData() async {
-  //   int count = 1;
-  //   List<String> fileList = [];
-  //   while (true) {
-  //     final filename = 'stage${count.toString().padLeft(3, '0')}.dat';
-  //     final file = File('/assets/stageData/$filename');
-  //     if (await file.exists()) {
-  //       fileList.add(filename);
-  //       count++;
-  //     } else {
-  //       break;
-  //     }
-  //   }
-  //   return fileList;
-  // }
-
-  Future<List<String>> getAllAssets() async {
-    final manifestContent = await rootBundle.loadString('AssetManifest.json');
-    final Map<String, dynamic> manifestMap = json.decode(manifestContent);
-
-    final assetKeys = manifestMap.keys
-        .where((String key) =>
-            (key.endsWith('.dat') && key.contains('assets/stageData/')))
-        .toList();
-
-    List<String> fileList = [];
-    for (var assetKey in assetKeys) {
-      final assetPath = assetKey.replaceAll('assets/stageData/', '');
-      final assetContent = await rootBundle.loadString(assetKey);
-      // アセットファイルの内容を処理する
-      fileList.add(assetPath);
-    }
-    return fileList;
   }
 }

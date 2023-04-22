@@ -25,23 +25,27 @@
     }
   },
   "stageClearText": "Stage Clear!",
-  "@stepsText": {
+  "@stepsstageClearText": {
     "description": "ステージクリアのテキスト"
   },
   "nextStageText": "Next Stage",
-  "@stepsText": {
+  "@nextStageText": {
     "description": "次ステージボタンのテキスト"
   },
   "backToTitleText": "Back To Title",
-  "@stepsText": {
+  "@backToTitleText": {
     "description": "タイトル画面に戻るのテキスト"
   },
   "newGameText": "New Game",
-  "@stepsText": {
+  "@newGameText": {
     "description": "New Game"
   },
   "selectStageText": "Select Stage",
-  "@stepsText": {
+  "@selectStageText": {
     "description": "Select Stage"
+  },
+  "instructionText": "Use WASD or Arrow Keys for movement.\nMove crates to goals!",
+  "@instructionText": {
+    "description": "instruction"
   }
 }
