@@ -47,5 +47,9 @@
   "instructionText": "Use WASD or Arrow Keys for movement.\nMove crates to goals!",
   "@instructionText": {
     "description": "instruction"
+  },
+  "retryText": "Retry",
+  "@retryText": {
+    "description": "Retry"
   }
 }

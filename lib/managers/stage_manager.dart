@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:sokoban/utils/int_vector2.dart';
-import 'dart:io';
 
 // 面データのファイル形式は標準的なXsokoban形式に準拠する
 /*
@@ -75,13 +74,13 @@ class ReplayData {
   ReplayData(this.board, this.player_pos, this.crate_pos);
 }
 
-// ファイルからステージデータを読み込み
-Future<void> readStageDataFromFile(String filePath) async {
-  List<String> stageDataStr = [];
-  //ファイル読み込み処理
-  stageDataStr = await (File(filePath).readAsLines());
-  readStageData(stageDataStr);
-}
+// // ファイルからステージデータを読み込み
+// Future<void> readStageDataFromFile(String filePath) async {
+//   List<String> stageDataStr = [];
+//   //ファイル読み込み処理
+//   stageDataStr = await (File(filePath).readAsLines());
+//   readStageData(stageDataStr);
+// }
 
 // Assetsからステージデータを読み込み
 Future<void> loadAssetsStageDataTextFile(String filePath) async {

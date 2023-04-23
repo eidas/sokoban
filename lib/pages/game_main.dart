@@ -27,10 +27,8 @@ class _GameMainState extends State<GameMain> {
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments;
     String stageName = '001.dat';
-    String nextStageName = '';
     if (arguments != null && arguments is Map) {
       stageName = arguments['stageName'].toString();
-      nextStageName = arguments['nextStageName'] ?? '';
     }
 
     final localizations = AppLocalizationWrapper(context).appLocalizations;

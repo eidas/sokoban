@@ -211,7 +211,12 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     var horizontalDirection = 0;
     var verticalDirection = 0;
 
-    // プレイヤーが移動中はユーザーコマンドを無視
+    // メニュー呼び出し(メニューのみプレイヤー移動中も受付)
+    if (userCommands.firstOrNull == UserCommand.menu) {
+      overlays.add('MainMenu');
+    }
+
+    // プレイヤーが移動中はメニュー以外のユーザーコマンドを無視
     if (_player.isMoving) return;
 
     while (userCommands.isNotEmpty) {
@@ -418,7 +423,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   }
 
   /// ゲーム終了
-  void exitGame() async {
+  void exitGame() {
     FlameAudio.bgm.audioPlayer.stop();
     FlameAudio.bgm.dispose();
   }
