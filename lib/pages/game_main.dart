@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:sokoban/overlays/settings_menu.dart';
 import 'package:sokoban/overlays/stage_clear.dart';
 import 'package:sokoban/overlays/main_menu.dart';
 import 'package:sokoban/sokoban.dart';
@@ -10,6 +11,7 @@ import 'package:sokoban/helper/setting.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:sokoban/constants.dart';
 
 class GameMain extends StatefulWidget {
   const GameMain({
@@ -32,7 +34,7 @@ class _GameMainState extends State<GameMain> {
     }
 
     final localizations = AppLocalizationWrapper(context).appLocalizations;
-    final setting = Setting(false, 1);
+    final setting = Setting(Bgm.off, 0.8);
     gameFactory() => SokobanGame(
           context,
           localizations,
@@ -42,16 +44,22 @@ class _GameMainState extends State<GameMain> {
     return GameWidget<SokobanGame>.controlled(
       gameFactory: gameFactory,
       overlayBuilderMap: {
-        'MainMenu': (_, game) => MainMenu(game: game),
-        'StageClear': (_, game) => StageClear(game: game),
-        'NavigationKey': (_, game) => Align(
+        // メインメニューオーバーレイ
+        Constants.mainMenuOverlayKey: (_, game) => MainMenu(game: game),
+        // メインメニューオーバーレイ
+        Constants.settingsMenuOverlayKey: (_, game) => SettingsMenu(game: game),
+        // ステージクリアオーバーレイ
+        Constants.stageClearOverlayKey: (_, game) => StageClear(game: game),
+        // ナビゲーションキーオーバーレイ
+        Constants.navigationKeyOverlayKey: (_, game) => Align(
               alignment: Alignment.bottomLeft,
               child: NavigationKeys(
                 game: game,
                 onDirectionChanged: game.onVirtualKeyChanged,
               ),
             ),
-        'MenuKey': (_, game) => Align(
+        // メニューキーオーバーレイ
+        Constants.menuKeyOverlayKey: (_, game) => Align(
               alignment: Alignment.bottomRight,
               child: MenuKeys(
                 game: game,
@@ -59,7 +67,10 @@ class _GameMainState extends State<GameMain> {
               ),
             ),
       },
-      initialActiveOverlays: const ['NavigationKey', 'MenuKey'],
+      initialActiveOverlays: const [
+        Constants.navigationKeyOverlayKey, // ナビゲーションキー
+        Constants.menuKeyOverlayKey // メニューキー
+      ],
     );
   }
 

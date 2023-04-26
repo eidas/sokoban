@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import 'package:sokoban/sokoban.dart';
+import 'package:sokoban/constants.dart';
 
 class MainMenu extends StatelessWidget {
   // Reference to parent game.
   final SokobanGame game;
 
   const MainMenu({super.key, required this.game});
-  final String mainMenuOverlayKey = 'MainMenu';
+  final String thisOverlayKey = Constants.mainMenuOverlayKey;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +32,34 @@ class MainMenu extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // settingボタン
+                SizedBox(
+                  width: 200,
+                  height: 75,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      game.overlays.add(Constants.settingsMenuOverlayKey);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: whiteTextColor,
+                    ),
+                    child: Text(
+                      game.localizations.settingsText,
+                      style: const TextStyle(
+                        fontSize: 28.0,
+                        color: blackTextColor,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
                 // retryボタン
                 SizedBox(
                   width: 200,
                   height: 75,
                   child: ElevatedButton(
                     onPressed: () {
-                      game.overlays.remove(mainMenuOverlayKey);
+                      game.overlays.remove(thisOverlayKey);
                       Navigator.of(context)
                           .pushReplacementNamed('/gamepage', arguments: {
                         'stageName': game.stageName,
@@ -62,7 +84,7 @@ class MainMenu extends StatelessWidget {
                   height: 75,
                   child: ElevatedButton(
                     onPressed: () {
-                      game.overlays.remove(mainMenuOverlayKey);
+                      game.overlays.remove(thisOverlayKey);
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
@@ -86,7 +108,9 @@ class MainMenu extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
-                game.overlays.remove('MainMenu');
+                game.overlayDisplayed = false;
+                game.userCommands = [];
+                game.overlays.remove(thisOverlayKey);
               },
               splashRadius: 0.1,
             ),

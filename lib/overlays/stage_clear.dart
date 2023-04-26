@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:sokoban/sokoban.dart';
 import 'package:sokoban/helper/stage_data.dart';
+import 'package:sokoban/constants.dart';
 
 class StageClear extends StatelessWidget {
   // Reference to parent game.
   final SokobanGame game;
   const StageClear({super.key, required this.game});
-  final String stageClearOverlayKey = 'StageClear';
+  final String thisOverlayKey = Constants.stageClearOverlayKey;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,7 @@ class StageClear extends StatelessWidget {
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () {
-                    game.overlays.remove(stageClearOverlayKey);
+                    game.overlays.remove(thisOverlayKey);
                     Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(

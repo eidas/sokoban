@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
@@ -6,6 +8,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:sokoban/constants.dart';
+import 'package:sokoban/helper/bgm_player.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
@@ -37,6 +40,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   // double objectSpeed = 0.0;
   int gameSteps = 0;
   List<UserCommand> userCommands = [];
+  bool overlayDisplayed = false;
 
   @override
   Color backgroundColor() {
@@ -59,6 +63,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   void update(double dt) {
     executeUserCommand();
     if (_player.isMoving == false && judgeStageClear()) {
+      overlayDisplayed = true;
       overlays.add('StageClear');
     }
     super.update(dt);
@@ -156,10 +161,8 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     add(Hud());
 
     // BGM
-    if (setting.bgmOn) {
-      FlameAudio.bgm.initialize();
-      FlameAudio.bgm.play('TEC07366OLK_TEC1.mp3', volume: setting.bgmVolume);
-    }
+    BgmPlayer.setBgm(setting.bgm);
+    BgmPlayer.setVolume(setting.bgmVolume);
   }
 
   /// 仮想キーの入力イベント受付
@@ -211,9 +214,13 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     var horizontalDirection = 0;
     var verticalDirection = 0;
 
+    // メニュー、ステージクリア、設定のいずれかのオーバーレイが出ている間は操作できない
+    if (overlayDisplayed) return;
+
     // メニュー呼び出し(メニューのみプレイヤー移動中も受付)
     if (userCommands.firstOrNull == UserCommand.menu) {
       overlays.add('MainMenu');
+      overlayDisplayed = true;
     }
 
     // プレイヤーが移動中はメニュー以外のユーザーコマンドを無視

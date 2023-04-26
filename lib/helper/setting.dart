@@ -1,10 +1,18 @@
-class Setting {
-  final bool bgmOn;
-  final double bgmVolume;
+enum Bgm {
+  off,
+  shuffle,
+  bgm1,
+  bgm2,
+  bgm3,
+}
 
-  Setting(this.bgmOn, this.bgmVolume);
+class Setting {
+  Bgm bgm;
+  double bgmVolume;
+
+  Setting(this.bgm, this.bgmVolume);
 
   Setting.clone(Setting setting)
-      : bgmOn = setting.bgmOn,
+      : bgm = setting.bgm,
         bgmVolume = setting.bgmVolume;
 }

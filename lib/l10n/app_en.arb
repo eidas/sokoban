@@ -51,5 +51,9 @@
   "retryText": "Retry",
   "@retryText": {
     "description": "Retry"
+  },
+  "settingsText": "Settings",
+  "@settingsText": {
+    "description": "Settings"
   }
 }
