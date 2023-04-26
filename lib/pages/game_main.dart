@@ -8,6 +8,7 @@ import 'package:sokoban/sokoban.dart';
 import 'package:sokoban/overlays/navidatiion_keys.dart';
 import 'package:sokoban/overlays/menu_keys.dart';
 import 'package:sokoban/helper/setting.dart';
+import 'package:sokoban/helper/stage_data.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations_en.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -28,13 +29,14 @@ class _GameMainState extends State<GameMain> {
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)!.settings.arguments;
+    final Future<List<String>> stageDataList = StageData.stageDataList;
     String stageName = '001.dat';
     if (arguments != null && arguments is Map) {
       stageName = arguments['stageName'].toString();
     }
 
     final localizations = AppLocalizationWrapper(context).appLocalizations;
-    final setting = Setting(Bgm.off, 0.8);
+    final setting = Setting(Bgm.off, 0.9);
     gameFactory() => SokobanGame(
           context,
           localizations,

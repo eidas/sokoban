@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:collection/collection.dart';
 import 'package:flutter/services.dart';
 
 class StageData {
@@ -7,12 +6,12 @@ class StageData {
   static bool _isComplete = false;
   static Future<List<String>> get stageDataList async {
     if (_stageDataList == null) {
-      await getStageDataListFromAssets();
+      await _getStageDataListFromAssets();
     }
     return _stageDataList!;
   }
 
-  static Future<void> getStageDataListFromAssets() async {
+  static Future<void> _getStageDataListFromAssets() async {
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
 
@@ -24,8 +23,6 @@ class StageData {
     _stageDataList = [];
     for (var assetKey in assetKeys) {
       final assetPath = assetKey.replaceAll('assets/stageData/', '');
-      final assetContent = await rootBundle.loadString(assetKey);
-      // ToDo: アセットファイルの内容を処理する
       _stageDataList!.add(assetPath);
     }
     _isComplete = true;
