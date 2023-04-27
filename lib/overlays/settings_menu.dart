@@ -60,9 +60,9 @@ class _SettingsMenuState extends State<SettingsMenu> {
                   child: Column(
                     children: [
                       const SizedBox(height: 10),
-                      const Text(
-                        'BGM', // Sliderの値を表示
-                        style: TextStyle(
+                      Text(
+                        widget.game.localizations.bgmText,
+                        style: const TextStyle(
                           fontSize: 30.0,
                           color: blackTextColor,
                         ),
@@ -108,7 +108,9 @@ class _SettingsMenuState extends State<SettingsMenu> {
                     children: [
                       const SizedBox(height: 10),
                       Text(
-                        'Volume: ${widget.game.setting.bgmVolume.toStringAsFixed(2)}', // Sliderの値を表示
+                        widget.game.localizations.volumeText(
+                            widget.game.setting.bgmVolume.toStringAsFixed(2)),
+                        // 'Volume: ${widget.game.setting.bgmVolume.toStringAsFixed(2)}', // Sliderの値を表示
                         style: const TextStyle(
                           fontSize: 30.0,
                           color: blackTextColor,

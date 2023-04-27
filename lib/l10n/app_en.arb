@@ -55,5 +55,19 @@
   "settingsText": "Settings",
   "@settingsText": {
     "description": "Settings"
+  },
+  "bgmText": "BGM",
+  "@bgmText": {
+    "description": "BGM"
+  },
+  "volumeText": "Volume: {volume}",
+  "@volumeText": {
+    "description": "音量の表示",
+    "placeholders": {
+      "volume": {
+        "type": "String",
+        "format": "compact"
+      }
+    }
   }
 }

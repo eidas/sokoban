@@ -34,7 +34,7 @@ class MainMenu extends StatelessWidget {
               children: [
                 // settingボタン
                 SizedBox(
-                  width: 200,
+                  width: 240,
                   height: 75,
                   child: ElevatedButton(
                     onPressed: () {
@@ -55,7 +55,7 @@ class MainMenu extends StatelessWidget {
                 const SizedBox(height: 40),
                 // retryボタン
                 SizedBox(
-                  width: 200,
+                  width: 240,
                   height: 75,
                   child: ElevatedButton(
                     onPressed: () {
@@ -80,7 +80,7 @@ class MainMenu extends StatelessWidget {
                 const SizedBox(height: 40),
                 // BackToTitle ボタン
                 SizedBox(
-                  width: 200,
+                  width: 240,
                   height: 75,
                   child: ElevatedButton(
                     onPressed: () {

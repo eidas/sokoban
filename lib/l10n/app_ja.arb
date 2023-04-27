@@ -10,5 +10,7 @@
   "selectStageText": "ステージを選ぶ",
   "instructionText": "WASDか矢印キーで移動\n荷物をゴールに運ぼう!",
   "retryText": "やりなおす",
-  "settingsText": "設定"
+  "settingsText": "設定",
+  "bgmText": "BGM",
+  "volumeText": "音量: {volume}"
 }

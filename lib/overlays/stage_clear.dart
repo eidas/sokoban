@@ -42,7 +42,7 @@ class StageClear extends StatelessWidget {
               const SizedBox(height: 40),
               // NextStage ボタン
               SizedBox(
-                width: 200,
+                width: 240,
                 height: 75,
                 child: ElevatedButton(
                   onPressed: nextStageName == null
@@ -68,7 +68,7 @@ class StageClear extends StatelessWidget {
               const SizedBox(height: 40),
               // BackToTitle ボタン
               SizedBox(
-                width: 200,
+                width: 240,
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () {

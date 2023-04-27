@@ -15,7 +15,7 @@ class TitlePage extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10.0),
           height: 500,
-          width: 300,
+          width: 320,
           decoration: const BoxDecoration(
             color: blackTextColor,
             borderRadius: BorderRadius.all(
@@ -35,7 +35,7 @@ class TitlePage extends StatelessWidget {
               const SizedBox(height: 40),
               // New Game Button
               SizedBox(
-                width: 240,
+                width: 260,
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pushNamed("/gamepage"),
@@ -54,7 +54,7 @@ class TitlePage extends StatelessWidget {
               const SizedBox(height: 40),
               // Select Stage Button
               SizedBox(
-                width: 240,
+                width: 260,
                 height: 75,
                 child: ElevatedButton(
                   onPressed: () =>
