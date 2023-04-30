@@ -13,16 +13,16 @@ Xsokoban形式
 人＋ゴール:	  +
 荷物＋ゴール:	*
 */
-const List<String> const_stageDataStr = [
-  r'########',
-  r'#.   @ #',
-  r'#    $ #',
-  r'#$#  . #',
-  r'# # $  #',
-  r'#     ##',
-  r'#   . ##',
-  r'########',
-];
+// const List<String> const_stageDataStr = [
+//   r'########',
+//   r'#.   @ #',
+//   r'#    $ #',
+//   r'#$#  . #',
+//   r'# # $  #',
+//   r'#     ##',
+//   r'#   . ##',
+//   r'########',
+// ];
 
 // 面データを内部で持つ持ち方は以下のとおり
 /* List<List<int>> stageData
@@ -34,12 +34,12 @@ const List<String> const_stageDataStr = [
 5: 荷物＋ゴール(Crate+Goal)
 */
 enum Tile {
-  None,
-  Ground,
-  Wall,
-  Goal,
-  Crate,
-  CrateAndGoal,
+  none,
+  ground,
+  wall,
+  goal,
+  crate,
+  crateAndGoal,
 }
 
 int playerX = 0;
@@ -69,9 +69,9 @@ List<ReplayData> replayList = [];
 class ReplayData {
 //  final List<List<Tile>> board;
   final Board board;
-  final IntVector2 player_pos;
-  final IntVector2? crate_pos;
-  ReplayData(this.board, this.player_pos, this.crate_pos);
+  final IntVector2 playerPos;
+  final IntVector2? cratePos;
+  ReplayData(this.board, this.playerPos, this.cratePos);
 }
 
 // // ファイルからステージデータを読み込み
@@ -99,35 +99,35 @@ void readStageData(List<String> stageDataStr) {
   tileColumns = maxColumns;
   tileRows = maxRows;
   board.boardData = List.generate(
-      maxRows, (j) => List.generate(maxColumns, (i) => Tile.None));
+      maxRows, (j) => List.generate(maxColumns, (i) => Tile.none));
   for (int j = 0; j < maxRows; j++) {
     for (int i = 0; i < stageDataStr[j].length; i++) {
       var chr = stageDataStr[j][i];
       switch (chr) {
         case ' ': // Ground
-          board.boardData[j][i] = Tile.Ground;
+          board.boardData[j][i] = Tile.ground;
           break;
         case '#': // Block
-          board.boardData[j][i] = Tile.Wall;
+          board.boardData[j][i] = Tile.wall;
           break;
         case '.': // Goal
-          board.boardData[j][i] = Tile.Goal;
+          board.boardData[j][i] = Tile.goal;
           goals++;
           break;
         case '@': // Player
-          board.boardData[j][i] = Tile.Ground;
+          board.boardData[j][i] = Tile.ground;
           playerX = i;
           playerY = j;
           break;
         case r'$': // Crate
-          board.boardData[j][i] = Tile.Crate;
+          board.boardData[j][i] = Tile.crate;
           break;
         case '*': // Crate + Goal
-          board.boardData[j][i] = Tile.CrateAndGoal;
+          board.boardData[j][i] = Tile.crateAndGoal;
           goals++;
           break;
         case '+': // Player + Goal
-          board.boardData[j][i] = Tile.Goal;
+          board.boardData[j][i] = Tile.goal;
           playerX = i;
           playerY = j;
           goals++;
@@ -146,7 +146,7 @@ bool judgeStageClear() {
   for (int j = 0; j < tileRows; j++) {
     for (int i = 0; i < tileColumns; i++) {
       countOfCrateAndGoal +=
-          (board.boardData[j][i] == Tile.CrateAndGoal) ? 1 : 0;
+          (board.boardData[j][i] == Tile.crateAndGoal) ? 1 : 0;
     }
   }
   return countOfCrateAndGoal == goals;
@@ -159,19 +159,19 @@ List<String> getXsokobanString(Board board) {
     var rowString = '';
     for (var col in row) {
       switch (col) {
-        case Tile.Ground:
+        case Tile.ground:
           rowString += ' ';
           break;
-        case Tile.Wall:
+        case Tile.wall:
           rowString += '#';
           break;
-        case Tile.Goal:
+        case Tile.goal:
           rowString += '.';
           break;
-        case Tile.Crate:
+        case Tile.crate:
           rowString += '\$';
           break;
-        case Tile.CrateAndGoal:
+        case Tile.crateAndGoal:
           rowString += '*';
           break;
         default:

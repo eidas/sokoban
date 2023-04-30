@@ -106,9 +106,8 @@ class MainMenu extends StatelessWidget {
             radius: 20,
             backgroundColor: Colors.black,
             child: IconButton(
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: () {
-                game.overlayDisplayed = false;
                 game.userCommands = [];
                 game.overlays.remove(thisOverlayKey);
               },

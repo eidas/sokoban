@@ -1,7 +1,5 @@
-import 'dart:convert';
 // import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sokoban/helper/stage_data.dart';
 
@@ -9,10 +7,10 @@ class SelectStage extends StatefulWidget {
   const SelectStage({Key? key}) : super(key: key);
 
   @override
-  _SelectStageState createState() => _SelectStageState();
+  SelectStageState createState() => SelectStageState();
 }
 
-class _SelectStageState extends State<SelectStage> {
+class SelectStageState extends State<SelectStage> {
   late Future<List<String>> _fileListFuture;
   late List<String> _fileList;
   String? _selectedFile;

@@ -12,13 +12,17 @@ class BgmPlayer {
     'TEC07781BAG_TEC1.mp3',
   ];
 
-  static void setBgm(Bgm bgm) {
-    if (!bgmPlayerInitialized) {
-      FlameAudio.bgm.initialize();
-      bgmPlayerInitialized = true;
-    }
+  static Future<void> setBgm(Bgm bgm) async {
+    FlameAudio.bgm.initialize();
+    // if (!bgmPlayerInitialized) {
+    //   FlameAudio.bgm.initialize();
+    //   bgmPlayerInitialized = true;
+    // }
     String audioFileName = audioFileNames[0];
-    FlameAudio.bgm.audioPlayer.stop();
+    await FlameAudio.bgm.audioPlayer.stop();
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    );
     if (bgm == Bgm.off) return;
     switch (bgm) {
       case Bgm.bgm1:
@@ -37,10 +41,10 @@ class BgmPlayer {
         audioFileName = audioFileNames[0];
         break;
     }
-    FlameAudio.bgm.play(audioFileName);
+    await FlameAudio.bgm.play(audioFileName);
   }
 
-  static void setVolume(double volume) {
+  static Future<void> setVolume(double volume) async {
     FlameAudio.bgm.audioPlayer.setVolume(volume);
   }
 }

@@ -1,13 +1,9 @@
-import 'dart:math';
-
-import 'package:flame/components.dart';
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:sokoban/constants.dart';
 import 'package:sokoban/helper/bgm_player.dart';
 
 import 'actors/player.dart';
@@ -40,7 +36,6 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   // double objectSpeed = 0.0;
   int gameSteps = 0;
   List<UserCommand> userCommands = [];
-  bool overlayDisplayed = false;
 
   @override
   Color backgroundColor() {
@@ -63,7 +58,6 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   void update(double dt) {
     executeUserCommand();
     if (_player.isMoving == false && judgeStageClear()) {
-      overlayDisplayed = true;
       overlays.add('StageClear');
     }
     super.update(dt);
@@ -76,17 +70,17 @@ class SokobanGame extends FlameGame with KeyboardEvents {
       for (int i = 0; i < tileColumns; i++) {
         pos = IntVector2(i, j);
         switch (board.boardData[j][i]) {
-          case Tile.Ground:
+          case Tile.ground:
             add(Ground(
               gridPosition: pos,
             ));
             break;
-          case Tile.Wall:
+          case Tile.wall:
             add(Wall(
               gridPosition: pos,
             ));
             break;
-          case Tile.Goal:
+          case Tile.goal:
             add(Ground(
               gridPosition: pos,
             ));
@@ -94,7 +88,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
               gridPosition: pos,
             ));
             break;
-          case Tile.Crate:
+          case Tile.crate:
             add(Ground(
               gridPosition: pos,
             ));
@@ -105,7 +99,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
             _crates.add(crate);
             // add(crate);
             break;
-          case Tile.CrateAndGoal:
+          case Tile.crateAndGoal:
             add(Ground(
               gridPosition: pos,
             ));
@@ -130,7 +124,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   Future<void> initializeGame() async {
     _crates = [];
     userCommands = [];
-    await loadAssetsStageDataTextFile('assets/stageData/${stageName}');
+    await loadAssetsStageDataTextFile('assets/stageData/$stageName');
     // await readStageDataFromFile('assets/stageData/${stageName}');
     // readStageData(const_stageDataStr);
     removeAll(children); // 2回目以降のため追加されたコンポーネントを一度全部削除
@@ -209,18 +203,25 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     return KeyEventResult.handled;
   }
 
+  // ダイアログ系オーバーレイ(メニュー、ステージクリア、設定)のいずれかがアクティブか
+  bool get isOverlayDisplayed {
+    return overlays.activeOverlays
+        .where(
+            (e) => (e == 'MainMenu' || e == 'StageClear' || e == 'SettingMenu'))
+        .isNotEmpty;
+  }
+
   /// ユーザーコマンドの実行
   void executeUserCommand() {
     var horizontalDirection = 0;
     var verticalDirection = 0;
 
-    // メニュー、ステージクリア、設定のいずれかのオーバーレイが出ている間は操作できない
-    if (overlayDisplayed) return;
+    // ダイアログ系オーバーレイ(メニュー、ステージクリア、設定のいずれか)が出ている間は操作できない
+    if (isOverlayDisplayed) return;
 
     // メニュー呼び出し(メニューのみプレイヤー移動中も受付)
     if (userCommands.firstOrNull == UserCommand.menu) {
       overlays.add('MainMenu');
-      overlayDisplayed = true;
     }
 
     // プレイヤーが移動中はメニュー以外のユーザーコマンドを無視
@@ -269,16 +270,16 @@ class SokobanGame extends FlameGame with KeyboardEvents {
 
     // 移動可否の判定
     var oneStepAhead = board.boardData[y][x]; // 一歩先
-    if (oneStepAhead == Tile.Wall) return;
+    if (oneStepAhead == Tile.wall) return;
     // プレイヤーの先に荷物がある場合
-    if (oneStepAhead == Tile.Crate || oneStepAhead == Tile.CrateAndGoal) {
+    if (oneStepAhead == Tile.crate || oneStepAhead == Tile.crateAndGoal) {
       IntVector2 crateMoveTo =
           gridMoveTo + IntVector2(horizontalDirection, verticalDirection);
       var cx = crateMoveTo.x;
       var cy = crateMoveTo.y;
       var twoStepAhead = board.boardData[cy][cx]; // 二歩先
       // 荷物の移動先がゴールでも地面でもない時は動かせない
-      if (twoStepAhead != Tile.Goal && twoStepAhead != Tile.Ground) return;
+      if (twoStepAhead != Tile.goal && twoStepAhead != Tile.ground) return;
 
       // 荷物のスプライトを探す
       var crate = findCrate(gridMoveTo);
@@ -286,15 +287,15 @@ class SokobanGame extends FlameGame with KeyboardEvents {
         resetCrateSprites();
       } else {
         // 荷物移動
-        var onGoal = (twoStepAhead == Tile.Goal); // 移動先がゴールか
+        var onGoal = (twoStepAhead == Tile.goal); // 移動先がゴールか
         crate.moveTo(crateMoveTo, onGoal, () {});
       }
 
       // マップ更新
       newBoard.boardData[y][x] =
-          (oneStepAhead == Tile.CrateAndGoal ? Tile.Goal : Tile.Ground);
+          (oneStepAhead == Tile.crateAndGoal ? Tile.goal : Tile.ground);
       newBoard.boardData[cy][cx] =
-          (twoStepAhead == Tile.Goal ? Tile.CrateAndGoal : Tile.Crate);
+          (twoStepAhead == Tile.goal ? Tile.crateAndGoal : Tile.crate);
       crateNewPosition = IntVector2(cx, cy);
     }
 
@@ -326,16 +327,16 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     var nextReplayData = replayList[gameSteps + 1];
     board = currentReplayData.board;
     // プレイヤー移動
-    playerPosition = currentReplayData.player_pos;
+    playerPosition = currentReplayData.playerPos;
     _player.moveTo(playerPosition, isReverse: true, speedFactor: 0.5);
     // 荷物移動
-    if (nextReplayData.crate_pos != null) {
-      var crate = findCrate(nextReplayData.crate_pos!); // 次の手の
+    if (nextReplayData.cratePos != null) {
+      var crate = findCrate(nextReplayData.cratePos!); // 次の手の
       if (crate == null) {
         resetCrateSprites();
       } else {
         crate.moveTo(
-            nextReplayData.player_pos, isGoal(nextReplayData.player_pos), () {},
+            nextReplayData.playerPos, isGoal(nextReplayData.playerPos), () {},
             speedFactor: 0.5);
       }
     }
@@ -355,17 +356,17 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     // var previousReplayData = replayList[gameStep - 1];
     board = currentReplayData.board;
     // プレイヤー移動
-    playerPosition = currentReplayData.player_pos;
+    playerPosition = currentReplayData.playerPos;
     _player.moveTo(playerPosition, speedFactor: 0.5);
     // 荷物移動
-    if (currentReplayData.crate_pos != null) {
+    if (currentReplayData.cratePos != null) {
       var crate =
-          findCrate(currentReplayData.player_pos); // 1手前のプレイヤーの位置が荷物の元の位置
+          findCrate(currentReplayData.playerPos); // 1手前のプレイヤーの位置が荷物の元の位置
       if (crate == null) {
         resetCrateSprites();
       } else {
-        crate.moveTo(currentReplayData.crate_pos!,
-            isGoal(currentReplayData.crate_pos!), () {},
+        crate.moveTo(currentReplayData.cratePos!,
+            isGoal(currentReplayData.cratePos!), () {},
             speedFactor: 0.5);
       }
     }
@@ -389,7 +390,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
   /// 荷物がゴール上にあるかの判定
   bool isGoal(IntVector2 pos) {
     var tile = board.boardData[pos.y][pos.x];
-    return tile == Tile.Goal || tile == Tile.CrateAndGoal;
+    return tile == Tile.goal || tile == Tile.crateAndGoal;
   }
 
   /// 荷物のスプライトをリセットし再作成
@@ -402,14 +403,14 @@ class SokobanGame extends FlameGame with KeyboardEvents {
       for (int i = 0; i < tileColumns; i++) {
         pos = IntVector2(i, j);
         switch (board.boardData[j][i]) {
-          case Tile.Crate:
+          case Tile.crate:
             var crate = Crate(
               gridPosition: pos,
               isOnGoal: false,
             );
             _crates.add(crate);
             break;
-          case Tile.CrateAndGoal:
+          case Tile.crateAndGoal:
             var crate = Crate(
               gridPosition: pos,
               isOnGoal: true,
@@ -440,7 +441,7 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     for (var s in getXsokobanString(board)) {
       print(s);
     }
-    print('step=${gameSteps}');
+    print('step=$gameSteps');
     print('player x,y=${playerPosition.x},${playerPosition.y}');
   }
 }
