@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
+import 'package:flame/components.dart';
 import 'package:flutter/services.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,7 @@ import 'package:sokoban/helper/bgm_player.dart';
 
 import 'actors/player.dart';
 import 'actors/crate.dart';
+import 'constants.dart';
 import 'helper/user_command.dart';
 import 'objects/wall.dart';
 import 'objects/ground.dart';
@@ -18,7 +22,8 @@ import 'package:sokoban/overlays/hud.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:sokoban/helper/setting.dart';
 
-class SokobanGame extends FlameGame with KeyboardEvents {
+class SokobanGame extends FlameGame
+    with KeyboardEvents, ScrollDetector, ScaleDetector {
   SokobanGame(
     this.context,
     this.localizations,
@@ -141,6 +146,17 @@ class SokobanGame extends FlameGame with KeyboardEvents {
       xOffset: 0.0,
     );
     add(_player);
+
+    // カメラ
+    camera.viewport = FixedResolutionViewport(canvasSize);
+    camera.setRelativeOffset(Anchor.topLeft);
+    camera.speed = 100;
+    camera.worldBounds = Rect.fromLTWH(
+        0,
+        0,
+        max(tileColumns * Constants.tileSize, canvasSize.x),
+        max(tileRows * Constants.tileSize, canvasSize.y));
+
     // camera.followComponent(
     //   _player,
     //   relativeOffset: Anchor.topLeft,
@@ -443,5 +459,38 @@ class SokobanGame extends FlameGame with KeyboardEvents {
     }
     print('step=$gameSteps');
     print('player x,y=${playerPosition.x},${playerPosition.y}');
+  }
+
+  // ズーム＆スクロール関係 (初期化はInitializeGameの中で実施)
+
+  void clampZoom() {
+    camera.zoom = camera.zoom.clamp(0.05, 3.0);
+  }
+
+  static const zoomPerScrollUnit = 0.02;
+
+  @override
+  void onScroll(PointerScrollInfo info) {
+    camera.zoom += info.scrollDelta.game.y.sign * zoomPerScrollUnit;
+    clampZoom();
+  }
+
+  late double startZoom;
+
+  @override
+  void onScaleStart(info) {
+    startZoom = camera.zoom;
+  }
+
+  @override
+  void onScaleUpdate(ScaleUpdateInfo info) {
+    final currentScale = info.scale.global;
+    if (!currentScale.isIdentity()) {
+      camera.zoom = startZoom * currentScale.y;
+      clampZoom();
+    } else {
+      camera.translateBy(-info.delta.game);
+      camera.snap();
+    }
   }
 }
