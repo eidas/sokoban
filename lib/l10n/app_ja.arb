@@ -8,7 +8,7 @@
   "backToTitleText": "タイトルへ戻る",
   "newGameText": "最初から",
   "selectStageText": "ステージを選ぶ",
-  "instructionText": "WASDか矢印キーで移動\n荷物をゴールに運ぼう!",
+  "instructionText": "WASDか矢印キーで移動\n荷物をゴールに運ぼう!\nbuild2023.05.06.003",
   "retryText": "やりなおす",
   "settingsText": "設定",
   "bgmText": "BGM",
