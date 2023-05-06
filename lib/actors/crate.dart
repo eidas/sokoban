@@ -72,8 +72,8 @@ class Crate extends SpriteAnimationComponent
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache('crate.png'),
       SpriteAnimationData.sequenced(
-        amount: 1,
-        textureSize: Vector2.all(64),
+        amount: 2,
+        textureSize: Vector2.all(Constants.tileSize),
         stepTime: 0.3,
       ),
     );
