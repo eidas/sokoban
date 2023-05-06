@@ -68,6 +68,7 @@ class Crate extends SpriteAnimationComponent
   @override
   Future<void> onLoad() async {
     position = _gridToPixelPosition(gridPosition);
+    priority = 1;
     animation = SpriteAnimation.fromFrameData(
       game.images.fromCache('crate.png'),
       SpriteAnimationData.sequenced(
